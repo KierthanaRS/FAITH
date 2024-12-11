@@ -58,3 +58,10 @@ label:hover .tooltip {
   white-space:initial;
   
 }
+
+.bg-metrics {
+  background-color: #202020;  /* A darker background for metrics */
+}
+.text-metrics {
+  color: #e2e8f0;  /* Light gray color for text */
+}

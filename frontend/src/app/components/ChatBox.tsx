@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 interface ChatBoxProps {
-  messages: { sender: string; text: string }[];
+  messages: { sender: string; text: string; metrics?: { hallucinationPercentage: number; reason: string } }[];
   onSend: (message: string) => void;
 }
 
@@ -24,10 +24,20 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend }) => {
             className={`p-3 mb-5 ${
               msg.sender === "user"
                 ? "flex justify-end bg-userBubble max-w-[50%] ml-auto rounded-lg"
-                : "justify-start bg-aiBubble max-w-[70%] mr-auto rounded-lg inline-block"
+                : "justify-start bg-aiBubble max-w-[70%] mr-auto rounded-lg"
             }`}
           >
-            <span>{msg.text}</span>
+            {msg.text && <span>{msg.text}</span>}
+            {msg.metrics && (
+              <div className="bg-metrics p-3 mt-2 rounded-lg">
+                <p className="text-sm text-white">
+                  Hallucination: {msg.metrics.hallucinationPercentage}%
+                </p>
+                <p className="text-sm text-white">
+                  Reason: {msg.metrics.reason}
+                </p>
+              </div>
+            )}
           </div>
         ))}
       </div>

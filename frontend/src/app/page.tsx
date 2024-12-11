@@ -8,7 +8,7 @@ import {useRouter} from "next/navigation";
 
 const ChatPage = () => {
   const router = useRouter();
-  const [messages, setMessages] = useState<{ sender: string; text: string }[]>([]);
+  const [messages, setMessages] = useState<{ sender: string; text?: string; metrics?: { hallucinationPercentage: number; reason: string } }[]>([]);
   const [history, setHistory] = useState<{ id: string; name: string }[]>([
     { id: "1", name: "Chat 1" },
     { id: "2", name: "Chat 2" },
@@ -25,6 +25,9 @@ const ChatPage = () => {
 
     const botMessage = { sender: "bot", text: "No responses as of now" };
     setMessages((prevMessages) => [...prevMessages, botMessage]);
+
+    const metrics= { sender: "bot", metrics: { hallucinationPercentage: 12, reason: "Inaccurate context provided" } };
+    setMessages((prevMessages) => [...prevMessages, metrics]);
   };
 
   const handleLogin = () => {
@@ -48,8 +51,12 @@ const ChatPage = () => {
     setSelectedHistoryId(historyId);
     // Optionally load the corresponding messages for the selected history.
     const chatMessages = historyId === "1"
-    ? [{ sender: "user", text: "Hello 1" }]
-    : [{ sender: "user", text: "Hello 2" }];
+    ? [ { sender: "user", text: "Hello 1" },
+      { sender: "bot", text: "Here is your answer..." },
+      { sender: "bot", metrics: { hallucinationPercentage: 12, reason: "Inaccurate context provided" } },]
+    : [ { sender: "user", text: "Hello 2" },
+      { sender: "bot", text: "Here is your answer..." },
+      { sender: "bot", metrics: { hallucinationPercentage: 12, reason: "Inaccurate context provided" } },];
   setMessages(chatMessages);
   };
 
