@@ -71,6 +71,7 @@ const Dashboard: React.FC = () => {
   const handleApplyFilters = (
     selectedModels: string[],
     selectedMetrics: string[]
+
   ) => {
     const originalData = [
       {

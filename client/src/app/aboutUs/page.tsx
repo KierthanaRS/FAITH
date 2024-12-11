@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
+import { IoMdInformationCircleOutline } from "react-icons/io";
 import { useRouter } from "next/navigation";
 
 const AboutUs: React.FC = () => {
@@ -40,7 +41,11 @@ const AboutUs: React.FC = () => {
           FAITH
         </h1>
         <p className="text-sm mt-2 italic text-gray-300">
-        <span className="text-pink-500 text-lg">F</span>ramework for <span className="text-pink-500 text-lg">A</span>I   <span className="text-pink-500 text-lg ml-2">I</span>ntegrity and <span className="text-pink-500 text-lg">T</span>esting <span className="text-pink-500 text-lg">H</span>allucinations
+          <span className="text-pink-500 text-lg">F</span>ramework for{" "}
+          <span className="text-pink-500 text-lg">A</span>I{" "}
+          <span className="text-pink-500 text-lg ml-2">I</span>ntegrity and{" "}
+          <span className="text-pink-500 text-lg">T</span>esting{" "}
+          <span className="text-pink-500 text-lg">H</span>allucinations
         </p>
         <p className="mt-10">
           Our project focuses on detecting and addressing hallucinations in
@@ -96,7 +101,13 @@ const AboutUs: React.FC = () => {
         <form onSubmit={handleFormSubmit} className="mt-4 space-y-4">
           {/* Query */}
           <div>
-            <label className="block font-semibold mb-2">Query</label>
+            <label className="block font-semibold mb-2 relative">
+              Query
+              <IoMdInformationCircleOutline className="ml-[3.25rem] mt-[-3%] cursor-pointer text-violet-500" />
+              <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
+                Provide the query to check for hallucinations.
+              </span>
+            </label>
             <input
               type="text"
               name="query"
@@ -108,7 +119,13 @@ const AboutUs: React.FC = () => {
 
           {/* Response */}
           <div>
-            <label className="block font-semibold mb-2">Response</label>
+            <label className="block font-semibold mb-2 relative">
+              Response
+              <IoMdInformationCircleOutline className="ml-[5rem] mt-[-3%] cursor-pointer text-violet-500" />
+              <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
+                Provide the AI-generated response to analyze.
+              </span>
+            </label>
             <textarea
               name="response"
               className="w-full p-2 rounded bg-background border border-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 text-white"
@@ -120,7 +137,13 @@ const AboutUs: React.FC = () => {
 
           {/* Context */}
           <div>
-            <label className="block font-semibold mb-2">Context</label>
+            <label className="block font-semibold mb-2 relative">
+              Context
+              <IoMdInformationCircleOutline className="ml-[4rem] mt-[-3%] cursor-pointer text-violet-500" />
+              <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
+                Provide context for the query to help validate the response.
+              </span>
+            </label>
             <textarea
               name="context"
               className="w-full p-2 rounded bg-background border border-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 text-white"
@@ -132,7 +155,13 @@ const AboutUs: React.FC = () => {
 
           {/* Result */}
           <div>
-            <label className="block font-semibold mb-2">Expected Result</label>
+            <label className="block font-semibold mb-2 relative">
+              Expected Result
+              <IoMdInformationCircleOutline className="ml-[8rem] mt-[-3%] cursor-pointer text-violet-500" />
+              <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
+                Choose if the query is hallucinating or not.
+              </span>
+            </label>
             <div>
               <label className="flex items-center">
                 <input

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 
 interface FilterSidebarProps {
   models: string[];
@@ -13,6 +13,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 }) => {
   const [selectedModels, setSelectedModels] = useState<string[]>([]);
   const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
+  useEffect(()=>{
+    setSelectedModels(models); 
+    setSelectedMetrics(metrics); 
+  },[])
+
+  
 
   const handleModelChange = (model: string) => {
     setSelectedModels((prev) =>
@@ -34,6 +40,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
     onApplyFilters(selectedModels, selectedMetrics);
   };
 
+  const handleClear = () => {
+    setSelectedModels(models); 
+    setSelectedMetrics(metrics); 
+    onApplyFilters(models, metrics);
+  };
   return (
     <div className="p-4 bg-gray-800 text-white w-64">
       <h2 className="text-xl font-bold mb-4">Filters</h2>
@@ -66,11 +77,18 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
         ))}
       </div>
       <button
-        className="mt-6 bg-violet-500 p-2 w-full rounded"
+        className="mt-6 bg-violet-500 p-2 w-full rounded hover:bg-violet-700"
         onClick={handleApply}
       >
         Apply
       </button>
+      <button
+        className="mt-6 bg-pink-500 p-2 w-full rounded hover:bg-pink-600"
+        onClick={handleClear}
+      >
+        Clear Filter
+      </button>
+
     </div>
   );
 };
