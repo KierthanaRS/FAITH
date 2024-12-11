@@ -1,7 +1,10 @@
 "use client";
 import React, { useState } from "react";
+import { IoIosArrowBack } from "react-icons/io";
+import { useRouter } from "next/navigation";
 
 const AboutUs: React.FC = () => {
+  const router=useRouter();
   const [currentCalculation, setCurrentCalculation] = useState<string | null>(
     null
   );
@@ -12,7 +15,9 @@ const AboutUs: React.FC = () => {
 
   const handleFormSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    
     const result = (event.target as HTMLFormElement)["result"].value;
+  
     setCurrentCalculation(result);
     // Update the confusion matrix based on the result (example logic)
     const updatedMatrix = [...confusionMatrix];
@@ -26,13 +31,16 @@ const AboutUs: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-background text-white">
+      <div className="mt-3 ml-2">
+      <IoIosArrowBack  className="text-white size-6" onClick={()=>{router.push("/")}}/>
+      </div>
       {/* Left Part */}
-      <div className="w-1/2 p-8 bg-background">
+      <div className="w-1/2 py-8 px-4 bg-background">
         <h1 className="text-5xl bg-gradient-to-r from-violet-500 via-white to-pink-500 inline-block text-transparent bg-clip-text">
           FAITH
         </h1>
         <p className="text-sm mt-2 italic text-gray-300">
-          Empowering Accurate AI Interpretations
+        <span className="text-pink-500 text-lg">F</span>ramework for <span className="text-pink-500 text-lg">A</span>I   <span className="text-pink-500 text-lg ml-2">I</span>ntegrity and <span className="text-pink-500 text-lg">T</span>esting <span className="text-pink-500 text-lg">H</span>allucinations
         </p>
         <p className="mt-10">
           Our project focuses on detecting and addressing hallucinations in

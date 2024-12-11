@@ -1,6 +1,6 @@
 import React from "react";
 import { IoMdInformationCircleOutline } from "react-icons/io";
-import { FaRegEdit, FaPlus } from "react-icons/fa";
+import { FaRegEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
 interface LeftSidebarProps {
@@ -36,18 +36,21 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
 }) => {
   const router = useRouter();
   const handleSearch=(data:string)=>{
-    if(data===""){
+    if (data.trim() === "") {
       return;
     }
-    //seacrch if data is in history
-    let found=false;
-    history.map((item)=>{
-      if(item.name===data){
-        found=true;
+  
+    const searchTerm = data.toLowerCase(); 
+    let found = false;
+  
+    history.map((item) => {
+      if (item.name.toLowerCase().includes(searchTerm)) { 
+        found = true;
         onHistorySelect(item.id);
       }
-    })
-    if(!found){
+    });
+  
+    if (!found) {
       alert("No such chat history found");
     }
   }
@@ -73,7 +76,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
               className="bg-gray-800 px-2 py-1 rounded-md text-white focus:outline-none w-[75%]"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleSearch(e.target.value);
+                  handleSearch((e.target as HTMLInputElement).value);
                 }
               }}
             />
