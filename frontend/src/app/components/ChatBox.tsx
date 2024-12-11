@@ -16,8 +16,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend }) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-background">
-      <div className="flex-1 p-4 overflow-y-auto text-white inline-block custom-scrollbar">
+     <div className="flex flex-col h-full bg-background text-text">
+      <div className="flex-1 p-4 overflow-y-auto inline-block custom-scrollbar">
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -30,12 +30,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend }) => {
             {msg.text && <span>{msg.text}</span>}
             {msg.metrics && (
               <div className="bg-metrics p-3 mt-2 rounded-lg">
-                <p className="text-sm text-white">
-                  Hallucination: {msg.metrics.hallucinationPercentage}%
-                </p>
-                <p className="text-sm text-white">
-                  Reason: {msg.metrics.reason}
-                </p>
+                <p className="text-sm">{`Hallucination: ${msg.metrics.hallucinationPercentage}%`}</p>
+                <p className="text-sm">{`Reason: ${msg.metrics.reason}`}</p>
               </div>
             )}
           </div>

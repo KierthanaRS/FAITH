@@ -41,12 +41,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   };
 
   const handleClear = () => {
-    setSelectedModels(models); 
-    setSelectedMetrics(metrics); 
-    onApplyFilters(models, metrics);
+    setSelectedModels([]); 
+    setSelectedMetrics([]); 
+    onApplyFilters([], []);
   };
   return (
-    <div className="p-4 bg-gray-800 text-white w-64">
+    <div className="p-4 bg-sidebar text-white w-64">
       <h2 className="text-xl font-bold mb-4">Filters</h2>
       <div>
         <h3 className="font-semibold mb-2">Models</h3>
