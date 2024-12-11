@@ -35,6 +35,22 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onLoginClick,
 }) => {
   const router = useRouter();
+  const handleSearch=(data:string)=>{
+    if(data===""){
+      return;
+    }
+    //seacrch if data is in history
+    let found=false;
+    history.map((item)=>{
+      if(item.name===data){
+        found=true;
+        onHistorySelect(item.id);
+      }
+    })
+    if(!found){
+      alert("No such chat history found");
+    }
+  }
 
   return (
     <div className="w-64 bg-sidebar text-textcolor h-full flex flex-col">
@@ -55,6 +71,11 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
               type="text"
               placeholder="Search"
               className="bg-gray-800 px-2 py-1 rounded-md text-white focus:outline-none w-[75%]"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch(e.target.value);
+                }
+              }}
             />
             <FaRegEdit
               className="text-gray-100 size-5 cursor-pointer"
