@@ -16,6 +16,40 @@ const ChatPage = () => {
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(
     null
   );
+  const [textModels, setTextModels] = useState<string[]>( [
+    "Claude 3",
+    "Claude 2",
+    "Claude 1",
+    "Gemini 1",
+    "Gemini 1.5",
+    "BERT",
+    "ALBERT",
+    "T5",
+    "PaLM 1",
+    "PaLM 2",
+    "Med-PaLM",
+    "LLaMA 2",
+    "LLaMA 1",
+    "OPT-175B",
+    "Command R+",
+    "Embed",
+    "BLOOM",
+    "Flan-T5",
+    "Falcon Models",
+    "M6-10T",
+    "Megatron-Turing NLG",
+    "BioMegatron",
+    "Jurassic-2 Jumbo",
+    "Jurassic-1",
+    "Ernie 4.0",
+    "Ernie 3.0",
+    "ChatGLM-2",
+    "ChatGLM-6B",
+    "Mistral 7B",
+    "Mixtral",
+    "RedPajama"
+  ]
+  );
   const [model, setModel] = useState<string>("gpt-4.0");
   const loggedIn = localStorage.getItem("loggedIn") === "true";
 
@@ -71,7 +105,7 @@ const ChatPage = () => {
     <div className="flex h-screen">
       <LeftSidebar
         companyName="FAITH"
-        models={["gpt-4.0", "gpt-3.5", "Test our model"]}
+        models={["gpt-4.0", "gpt-3.5", "Test our model","Use other model"]}
         history={history}
         user={{
           avatar: "https://via.placeholder.com/150",
@@ -87,7 +121,7 @@ const ChatPage = () => {
         onLoginClick={handleLogin}
       />
       <div className="flex-1">
-        <ChatBox messages={messages} onSend={handleSend} />
+        <ChatBox messages={messages} onSend={handleSend} model={model} otherModels={textModels} />
       </div>
       <RightSidebar
         modelName={model}
@@ -98,7 +132,7 @@ const ChatPage = () => {
           hallucinationPercentage: 12,
         }}
         onDetailedAnalyticsClick={() => {router.push("/dashboard")}}
-        isLoggedIn={loggedIn}
+
       />
     </div>
   );

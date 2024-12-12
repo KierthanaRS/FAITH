@@ -8,14 +8,14 @@ interface RightSidebarProps {
     falseNegatives: number;
     hallucinationPercentage: number;
   };
-  isLoggedIn:boolean;
+
   onDetailedAnalyticsClick: () => void;
 }
 
 const RightSidebar: React.FC<RightSidebarProps> = ({
   modelName,
   stats,
-  isLoggedIn,
+
   onDetailedAnalyticsClick,
 }) => {
   return (
@@ -30,12 +30,12 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         </div>
 
         <div className="bg-gray-800 rounded-lg p-6 shadow-xl transform transition hover:scale-105 hover:shadow-2xl border-t-4 border-green-500">
-          <h2 className="text-xl font-bold text-gray-400">False Positives</h2>
+          <h2 className="text-xl font-bold text-green-500">False Positives</h2>
           <p className="text-sm text-gray-400">{stats.falsePositives}</p>
         </div>
 
         <div className="bg-gray-800 rounded-lg p-6 shadow-xl transform transition hover:scale-105 hover:shadow-2xl border-t-4 border-yellow-200">
-          <h2 className="text-xl font-bold text-indigo-400">
+          <h2 className="text-xl font-bold text-yellow-200">
             False Negatives
           </h2>
           <p className="text-sm text-gray-400">{stats.falseNegatives}</p>
@@ -49,7 +49,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
         </div>
       </div>
       <button
-        className="mt-auto bg-violet-500 hover:bg-violet-600 text-white py-2 px-2 rounded-md mx-auto"
+        className="mt-auto bg-gray-700 hover:bg-gray-800 text-white py-2 px-2 rounded-md mx-auto"
         onClick={onDetailedAnalyticsClick}
       >
         View Detailed Analytics

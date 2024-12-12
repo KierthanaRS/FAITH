@@ -28,6 +28,7 @@ const AboutUs: React.FC = () => {
       updatedMatrix[0][0] += 1; // True negative
     }
     setConfusionMatrix(updatedMatrix);
+  
   };
 
   return (
@@ -103,7 +104,7 @@ const AboutUs: React.FC = () => {
           <div>
             <label className="block font-semibold mb-2 relative">
               Query
-              <IoMdInformationCircleOutline className="ml-[3.25rem] mt-[-3%] cursor-pointer text-violet-500" />
+              <IoMdInformationCircleOutline className="ml-[3.25rem] mt-[-3%] cursor-progress text-violet-500" />
               <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
                 Provide the query to check for hallucinations.
               </span>
@@ -121,7 +122,7 @@ const AboutUs: React.FC = () => {
           <div>
             <label className="block font-semibold mb-2 relative">
               Response
-              <IoMdInformationCircleOutline className="ml-[5rem] mt-[-3%] cursor-pointer text-violet-500" />
+              <IoMdInformationCircleOutline className="ml-[5rem] mt-[-3%] cursor-progress text-violet-500" />
               <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
                 Provide the AI-generated response to analyze.
               </span>
@@ -139,7 +140,7 @@ const AboutUs: React.FC = () => {
           <div>
             <label className="block font-semibold mb-2 relative">
               Context
-              <IoMdInformationCircleOutline className="ml-[4rem] mt-[-3%] cursor-pointer text-violet-500" />
+              <IoMdInformationCircleOutline className="ml-[4rem] mt-[-3%] cursor-progress text-violet-500" />
               <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
                 Provide context for the query to help validate the response.
               </span>
@@ -157,7 +158,7 @@ const AboutUs: React.FC = () => {
           <div>
             <label className="block font-semibold mb-2 relative">
               Expected Result
-              <IoMdInformationCircleOutline className="ml-[8rem] mt-[-3%] cursor-pointer text-violet-500" />
+              <IoMdInformationCircleOutline className="ml-[8rem] mt-[-3%] cursor-progress text-violet-500" />
               <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
                 Choose if the query is hallucinating or not.
               </span>

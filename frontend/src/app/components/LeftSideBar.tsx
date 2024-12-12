@@ -35,37 +35,43 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onLoginClick,
 }) => {
   const router = useRouter();
-  const handleSearch=(data:string)=>{
+  const handleSearch = (data: string) => {
     if (data.trim() === "") {
       return;
     }
-  
-    const searchTerm = data.toLowerCase(); 
+
+    const searchTerm = data.toLowerCase();
     let found = false;
-  
+
     history.map((item) => {
-      if (item.name.toLowerCase().includes(searchTerm)) { 
+      if (item.name.toLowerCase().includes(searchTerm)) {
         found = true;
         onHistorySelect(item.id);
       }
     });
-  
+
     if (!found) {
       alert("No such chat history found");
     }
-  }
+  };
 
   return (
     <div className="w-64 bg-sidebar text-textcolor h-full flex flex-col">
       <div className="p-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-5xl bg-gradient-to-r from-violet-500 via-white to-pink-500 inline-block text-transparent bg-clip-text">
+        <div className="font-semibold mb-2 relative group flex">
+          <h1
+            onClick={() => router.push("/aboutUs")}
+            className="text-5xl bg-gradient-to-r from-violet-500 via-white to-pink-500 inline-block text-transparent bg-clip-text cursor-pointer"
+          >
             {companyName}
           </h1>
-          <IoMdInformationCircleOutline
-            className="text-violet-500 size-5 mt-2 cursor-pointer"
-            onClick={() => router.push("/aboutUs")}
-          />
+         
+            <IoMdInformationCircleOutline className="ml-[2rem] mt-[6%] text-violet-500 cursor-progress" />
+            <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded group-hover:block">
+              Click the logo to know more about the company.
+            </span>
+          </div>
         </div>
 
         {isLoggedIn && (
@@ -82,7 +88,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
             />
             <FaRegEdit
               className="text-gray-100 size-5 cursor-pointer"
-              onClick={onHistoryAdd} 
+              onClick={onHistoryAdd}
             />
           </div>
         )}
@@ -137,7 +143,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
           </div>
         ) : (
           <button
-            className="w-full p-2 bg-gray-700 rounded-md text-white mt-[210%] hover:bg-gray-600"
+            className="w-full p-2 bg-gray-700 rounded-md text-white mt-[210%] hover:bg-gray-800"
             onClick={onLoginClick}
           >
             Login
@@ -147,7 +153,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
         {isLoggedIn && (
           <div className="mt-4">
             <button
-              className="w-full p-2 bg-gray-700 rounded-md text-white hover:bg-gray-600"
+              className="w-full p-2 bg-gray-700 rounded-md text-white hover:bg-gray-800"
               onClick={onLogoutClick}
             >
               Logout
