@@ -1,10 +1,12 @@
 from pydantic import BaseModel
+from typing import Dict, List
 
 class ChatMessage(BaseModel):
     usermsg: str
     botmsg: str
-    metrics: dict
+    metrics: Dict[str, str]
 
 class Chat(BaseModel):
     userid: str
-    modelName: dict  
+    modelName: str
+    messages: List[ChatMessage]

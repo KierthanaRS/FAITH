@@ -16,6 +16,13 @@ const ChatPage = () => {
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(
     null
   );
+  const dummyUser = {
+    id:"675af187fc14f57242759769",
+    avatar: "https://via.placeholder.com/150",
+    name: "John Doe",
+    email: "johndoe@contoso.com",
+  };
+  const [user, setUser] = useState(dummyUser);
   const [textModels, setTextModels] = useState<string[]>( [
     "Claude 3",
     "Claude 2",
@@ -67,11 +74,13 @@ const ChatPage = () => {
   const handleLogin = () => {
     localStorage.setItem("loggedIn", "true");
     window.location.reload();
+    setUser(dummyUser);
   };
 
   const handleLogout = () => {
     localStorage.setItem("loggedIn", "false");
     window.location.reload();
+    setUser(dummyUser);
   };
 
   const handleModelChange = (model: string) => {
@@ -107,11 +116,7 @@ const ChatPage = () => {
         companyName="FAITH"
         models={["gpt-4.0", "gpt-3.5", "Test our model","Use other model"]}
         history={history}
-        user={{
-          avatar: "https://via.placeholder.com/150",
-          name: "Jane Doe",
-          email: "jane.doe@example.com",
-        }}
+        user={user}
         isLoggedIn={loggedIn}
         onModelChange={handleModelChange}
         onHistorySelect={handleHistorySelect}

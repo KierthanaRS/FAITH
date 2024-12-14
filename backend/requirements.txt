@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 pydantic
-pymongo
 motor
 python-dotenv
 azure-cosmos
+bson
