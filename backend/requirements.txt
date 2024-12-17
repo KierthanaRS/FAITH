@@ -4,4 +4,3 @@ pydantic
 motor
 python-dotenv
 azure-cosmos
-bson

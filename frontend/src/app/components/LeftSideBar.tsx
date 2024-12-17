@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { FaRegEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { FaLongArrowAltRight } from "react-icons/fa";
 
 interface LeftSidebarProps {
   companyName: string;
   models: string[];
   history: { id: string; name: string }[];
   user: {
+    id: string,
     avatar: string;
     name: string;
     email: string;
   };
+  model:string,
   isLoggedIn: boolean;
   onModelChange: (model: string) => void;
   onHistorySelect: (historyId: string) => void;
@@ -19,12 +22,14 @@ interface LeftSidebarProps {
   selectedHistoryId: string | null;
   onLogoutClick: () => void;
   onLoginClick: () => void;
+
 }
 
 const LeftSidebar: React.FC<LeftSidebarProps> = ({
   companyName,
   models,
   history,
+  model,
   user,
   isLoggedIn,
   onModelChange,
@@ -35,11 +40,20 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
   onLoginClick,
 }) => {
   const router = useRouter();
+  const [show,setShow]=useState(true);
+  useEffect(() => {
+    if (model === "Use other model") {
+      setShow(false);
+    }
+    else{
+      setShow(true)
+    }
+  }, [model]);
+
   const handleSearch = (data: string) => {
     if (data.trim() === "") {
       return;
     }
-
     const searchTerm = data.toLowerCase();
     let found = false;
 
@@ -86,10 +100,13 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
                 }
               }}
             />
+            {show && (
             <FaRegEdit
               className="text-gray-100 size-5 cursor-pointer"
               onClick={onHistoryAdd}
             />
+            )}
+           
           </div>
         )}
       </div>
@@ -107,24 +124,28 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
         </select>
       </div>
 
-      {isLoggedIn && (
+      {(isLoggedIn) && (
         <div className="flex-1 p-4 overflow-y-auto">
-          <h2 className="text-lg font-bold mb-2">History</h2>
-          <div className="space-y-2">
-            {history.map((item) => (
-              <div
-                key={item.id}
-                className={`p-2 rounded-md cursor-pointer ${
-                  selectedHistoryId === item.id
-                    ? "bg-violet-500 text-white"
-                    : "bg-gray-800 text-gray-300"
-                }`}
-                onClick={() => onHistorySelect(item.id)}
-              >
-                {item.name}
+          {show && (
+            <>
+              <h2 className="text-lg font-bold mb-2">History</h2>
+              <div className="space-y-2">
+                {history.map((item) => (
+                  <div
+                    key={item.id}
+                    className={`p-2 rounded-md cursor-pointer ${
+                      selectedHistoryId === item.id
+                        ? "bg-violet-500 text-white"
+                        : "bg-gray-800 text-gray-300"
+                    }`}
+                    onClick={() => onHistorySelect(item.id)}
+                  >
+                    {item.name}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </>
+          )}
         </div>
       )}
 
