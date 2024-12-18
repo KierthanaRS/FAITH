@@ -196,7 +196,7 @@ const ChatPage = () => {
       }
   
       const data = await response.json();
-      return {bot_response: data.bot_response };
+      return {bot_response: data.bot_response, hallucination:data.hallucination.groundedness, reason: data.hallucination.groundedness_reason };
     } catch (error) {
       console.error("Error generating response", error);
       throw error;
@@ -226,13 +226,14 @@ const ChatPage = () => {
         flag=true;
       }
   
-      const {bot_response}= await  generateResponse(message,model)
+      const {bot_response,hallucination,reason}= await  generateResponse(message,model)
+      const halluciantionNumber=Math.floor(hallucination);
       const newMessage = {
         usermsg: message,
         botmsg: bot_response,
         metrics: {
-          hallucinationPercentage: 12,
-          reason: "Response needs more context.",
+          hallucinationPercentage: halluciantionNumber,
+          reason: reason,
         },
       };
   
@@ -246,7 +247,7 @@ const ChatPage = () => {
               {
                 chatid: id, // Use chatid from selected history
                 chatName: name, // Use chatName from selected history
-                messages: [...(selectedChat?.messages || []), newMessage], // Append new message
+                messages: [newMessage], // Append new message
               },
             ],
           },
@@ -264,16 +265,14 @@ const ChatPage = () => {
       );
   
       if (response.ok) {
-        const responseData = await response.json();
-  
         if(flag){
           fetchChats(user.id)
           // handleHistorySelect(newHistoryid)
         }
         const updatedBotMessage = {
           sender: "bot",
-          text: bot_response || "Success!",
-          metrics: responseData.metrics || { hallucinationPercentage: 12, reason: "Generic response" },
+          text: bot_response ,
+          metrics: newMessage.metrics,
         };
   
         setMessages((prevMessages) => [
@@ -346,7 +345,8 @@ const ChatPage = () => {
         onLoginClick={handleLogin}
       />
       <div className="flex-1">
-        <ChatBox messages={messages} onSend={handleSend} model={model} otherModels={textModels} historyId={selectedHistoryId} user={user}/>
+        <ChatBox messages={messages} onSend={handleSend} model={model} otherModels={textModels} historyId={selectedHistoryId} user={user}
+      />
       </div>
       <RightSidebar
         modelName={model}

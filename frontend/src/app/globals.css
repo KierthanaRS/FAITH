@@ -48,15 +48,23 @@ label:hover .tooltip {
 }
 
 .tooltip {
-  display: none;
-  position: relative;
-  background-color: #000;
-  color: #fff;
+  display: none; 
+  position: absolute; 
+  background-color: rgba(255, 255, 255, 0.9); 
+  color:#000;
+  font-family: 'Times New Roman', Times, serif;
   padding: 8px;
   border-radius: 4px;
   font-size: 0.875rem;
-  white-space:initial;
-  
+  line-height: 1.2; 
+  white-space: normal; 
+  word-wrap: break-word;
+  z-index: 1000;
+  left: 10%;
+  transform: translateX(-10%);
+  margin-bottom: 8px; 
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+  text-align: center;
 }
 
 .bg-metrics {

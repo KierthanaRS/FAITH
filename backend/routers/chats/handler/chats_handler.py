@@ -83,13 +83,12 @@ async def insert_or_update_chat(data: Chat):
                         upsert=True 
                     )
 
-                    print(f"New chat with chatid '{new_chat_data.get('chatid')}' added.")
+          
                     update_needed = False
                     break
 
         # If model doesn't exist, add a new model
         if not model_found:
-            print(f"Model '{modelName}' not found. Adding new model...")
             new_model = ChatModel(
                 modelName=modelName,
                 chat=[data.get('chat')[0].get('chat')[0]]  
@@ -98,12 +97,11 @@ async def insert_or_update_chat(data: Chat):
             update_needed = True
 
         if update_needed:
-            print("Updating database with new chat data...")
+   
             result = await db["chats"].update_one(
                 {"userid": userid},
                 {"$set": {"chat": chat_list}}  
             )
-            print(f"Update result: {result.matched_count}, {result.modified_count}")
             if result.modified_count > 0:
                 return {"message": "Chat data updated successfully."}
 
