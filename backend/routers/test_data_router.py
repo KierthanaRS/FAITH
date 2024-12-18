@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from configs.database import db
-from models.test_data import TestResults, TestChats
+from models.test_data import TestResults
 
 router = APIRouter()
 
