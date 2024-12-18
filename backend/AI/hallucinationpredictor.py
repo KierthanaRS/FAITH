@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from azure.ai.evaluation import GroundednessEvaluator
-from contextgenerator import contextgenerator
+from AI.contextgenerator import contextgenerator
 from pydantic import BaseModel
 from langchain_openai import AzureChatOpenAI
 from langchain_community.callbacks import get_openai_callback
