@@ -22,5 +22,3 @@ app.add_middleware(
 app.include_router(chats_router, prefix="/api/v1/chats")
 app.include_router(bots_router, prefix="/api/v1/bots")
 app.include_router(test_model_router, prefix="/api/v1/test-model")
-
-print("server running at 8000")

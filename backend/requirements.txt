@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-pydantic
+pydantic[email]
 motor
 python-dotenv
 azure-cosmos

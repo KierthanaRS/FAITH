@@ -1,0 +1,72 @@
+services:
+  faith-backend:
+    image: "faith-backend:latest"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: "faith-backend"
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URI=${MONGODB_URI}
+      - MONGODB_DB=${MONGODB_DB}
+
+      # These credentials are for the Bing Search API (Context Generation)
+      - BING_API_KEY=${BING_API_KEY}
+      - BING_ENDPOINT=${BING_ENDPOINT}
+
+      # These credentials are for Metrics (Response Evaluation)
+      - AZURE_SUBSCRIPTION_ID=${AZURE_SUBSCRIPTION_ID}
+      - AZURE_RESOURCE_GROUP=${AZURE_RESOURCE_GROUP}
+      - AZURE_PROJECT_NAME=${AZURE_PROJECT_NAME}
+
+      # These credentials are for Groundedness Evaluation (Context - Response Comparison)
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_DEPLOYMENT=${AZURE_OPENAI_DEPLOYMENT}
+      - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION}
+
+      # These credentials are for Chat Completion using the model - gpt-4o-mini
+      - AZURE_OPENAI_ENDPOINT_gpt_4o_mini=
+      - AZURE_OPENAI_API_KEY_gpt_4o_mini=
+      - AZURE_OPENAI_DEPLOYMENT_gpt_4o_mini=
+      - AZURE_OPENAI_API_VERSION_gpt_4o_mini=
+
+      # These credentials are for Chat Completion using the model - gpt-4o
+      - AZURE_OPENAI_ENDPOINT_gpt_4o=${AZURE_OPENAI_ENDPOINT_gpt_4o}
+      - AZURE_OPENAI_API_KEY_gpt_4o=${AZURE_OPENAI_API_KEY_gpt_4o}
+      - AZURE_OPENAI_DEPLOYMENT_gpt_4o=${AZURE_OPENAI_DEPLOYMENT_gpt_4o}
+      - AZURE_OPENAI_API_VERSION_gpt_4o=${AZURE_OPENAI_API_VERSION_gpt_4o}
+
+      # These credentials are for Chat Completion using the model - gpt-4
+      - AZURE_OPENAI_ENDPOINT_gpt_4=${AZURE_OPENAI_ENDPOINT_gpt_4}
+      - AZURE_OPENAI_API_KEY_gpt_4=${AZURE_OPENAI_API_KEY_gpt_4}
+      - AZURE_OPENAI_DEPLOYMENT_gpt_4=${AZURE_OPENAI_DEPLOYMENT_gpt_4}
+      - AZURE_OPENAI_API_VERSION_gpt_4=${AZURE_OPENAI_API_VERSION_gpt_4}
+
+      # These credentials are for Chat Completion using the model - gpt-35-turbo-16k
+      - AZURE_OPENAI_ENDPOINT_gpt_35_turbo_16k=${AZURE_OPENAI_ENDPOINT_gpt_35_turbo_16k}
+      - AZURE_OPENAI_API_KEY_gpt_35_turbo_16k=${AZURE_OPENAI_API_KEY_gpt_35_turbo_16k}
+      - AZURE_OPENAI_DEPLOYMENT_gpt_35_turbo_16k=${AZURE_OPENAI_DEPLOYMENT_gpt_35_turbo_16k}
+      - AZURE_OPENAI_API_VERSION_gpt_35_turbo_16k=${AZURE_OPENAI_API_VERSION_gpt_35_turbo_16k}
+    networks:
+      - faith_network
+
+  faith-frontend:
+    image: "faith-frontend:latest"
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: "faith-frontend"
+    depends_on:
+      - faith-backend
+    ports:
+      - "3000:3000"
+    environment:
+      - "NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}"
+    networks:
+      - faith_network
+
+networks:
+  faith_network:
+    driver: bridge
