@@ -2,7 +2,7 @@ from configs.database import db
 from models.test_data import TestResults
 
 async def matrix_handler():
-    test_model_collection = db["Test_Chats"]
+    test_model_collection = db["TestResults"]
     data = await test_model_collection.find_one({})
     if not data:
         data = TestResults(

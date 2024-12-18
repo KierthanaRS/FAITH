@@ -8,7 +8,7 @@ async def test_model_handler(query: str, response: str, context: str, result: st
     res = "Halucinating"
     if score >= 4:
         res = "Not Halucinating"
-    test_model_collection = db["Test_Chats"]
+    test_model_collection = db["TestResults"]
     data = await test_model_collection.find_one({})
     if not data:
         data = TestResults(
@@ -19,7 +19,7 @@ async def test_model_handler(query: str, response: str, context: str, result: st
             FalseNegatives=0
         )
         await test_model_collection.insert_one(data.dict())
-    data = TestResults(**data)
+    # data = TestResults(**data)
     if res == result and res == "Not Halucinating":
         data.TruePositives = data.TruePositives + 1
     elif res == result and res == "Halucinating":
