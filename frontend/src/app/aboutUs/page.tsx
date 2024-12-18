@@ -1,11 +1,20 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { useRouter } from "next/navigation";
 
 const AboutUs: React.FC = () => {
-  const router=useRouter();
+  const router = useRouter();
+  const [form, setForm] = useState({
+    query: "",
+    response: "",
+    context: "",
+    result: "",
+  });
+  const [result, setResult] = useState<{ groundedness?: string; gpt_groundedness?: string; groundedness_reason?: string } | null>(null);
+  const [userresult, setUserResult] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState<boolean>(false);
   const [currentCalculation, setCurrentCalculation] = useState<string | null>(
     null
   );
@@ -13,28 +22,63 @@ const AboutUs: React.FC = () => {
     [50, 10],
     [5, 35],
   ]);
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({
+      ...prevForm,
+      [name]: value,
+    }));
+  };
 
-  const handleFormSubmit = (event: React.FormEvent) => {
+  const handleFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
-    const result = (event.target as HTMLFormElement)["result"].value;
-  
-    setCurrentCalculation(result);
-    // Update the confusion matrix based on the result (example logic)
-    const updatedMatrix = [...confusionMatrix];
-    if (result === "Halucinating") {
-      updatedMatrix[1][1] += 1; // False positive
-    } else {
-      updatedMatrix[0][0] += 1; // True negative
+    setSubmitted(true);
+    try {
+      // POST Request to the backend
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/test-model`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
+
+      const data = await res.json();
+      console.log("Response from server:", data);
+      setCurrentCalculation(data.result);
+      if(data.data.groundedness==6){
+        setCurrentCalculation("Intentional Hallucination")
+      }
+      setResult(data.data)
+      setUserResult(data.user_result)
+      //fetch updated matrix
+      setForm({
+        query: "",
+        response: "",
+        context: "",
+        result: "",
+      });
+      setSubmitted(false);
+    } catch (error) {
+      setSubmitted(false);
+      console.error("Error while submitting the form:", error);
     }
-    setConfusionMatrix(updatedMatrix);
-  
   };
 
   return (
-    <div className="flex h-screen bg-background text-white">
+    <div className="flex min-h-screen bg-background text-white">
       <div className="mt-3 ml-2">
-      <IoIosArrowBack  className="text-white size-6" onClick={()=>{router.push("/")}}/>
+        <IoIosArrowBack
+          className="text-white size-6"
+          onClick={() => {
+            router.push("/");
+          }}
+        />
       </div>
       {/* Left Part */}
       <div className="w-1/2 py-8 px-4 bg-background">
@@ -59,12 +103,61 @@ const AboutUs: React.FC = () => {
         <div className="mt-8">
           <h2 className="text-2xl font-semibold">Calculated Results</h2>
           {currentCalculation ? (
-            <p className="mt-2 bg-gray-700 p-4 rounded">
-              Result:{" "}
-              <span className="font-bold text-violet-400">
-                {currentCalculation}
-              </span>
-            </p>
+            <div className="mt-4 p-4 bg-gray-800 rounded-lg shadow-md text-gray-100 space-y-3">
+              {/* Result Header */}
+              <p className="text-lg font-bold">
+                User Result:{" "}
+                <span
+                  className={`${
+                    userresult === "Halucinating"
+                      ? "text-red-400"
+                      : "text-green-400"
+                  }`}
+                >
+                  {userresult}
+                </span>
+              </p>
+              <p className="text-lg font-bold">
+                Calculated Result:{" "}
+                <span
+                  className={`${
+                    currentCalculation === "Halucinating"
+                      ? "text-red-400"
+                      : "text-green-400"
+                  }`}
+                >
+                  {currentCalculation}
+                </span>
+              </p>
+
+              {/* Groundedness Scores */}
+              <div className="flex justify-between items-center border-t border-gray-700 pt-3">
+                <p className="text-sm">
+                  <span className="font-semibold text-violet-300">
+                    Groundedness:
+                  </span>{" "}
+                  {result?.groundedness || "N/A"}
+                </p>
+                {/* <p className="text-sm">
+                  <span className="font-semibold text-violet-300">
+                    GPT Groundedness:
+                  </span>{" "}
+                  {result?.gpt_groundedness || "N/A"}
+                </p> */}
+              </div>
+
+              {/* Reason for Result */}
+              {result?.groundedness_reason && (
+                <div className="mt-2 bg-gray-700 p-3 rounded-md">
+                  <h3 className="font-semibold text-sm text-gray-300">
+                    Explanation:
+                  </h3>
+                  <p className="text-sm text-gray-200">
+                    {result?.groundedness_reason}
+                  </p>
+                </div>
+              )}
+            </div>
           ) : (
             <p className="mt-2 text-gray-400">No calculation yet.</p>
           )}
@@ -72,9 +165,7 @@ const AboutUs: React.FC = () => {
 
         {/* Confusion Matrix */}
         <div className="mt-8">
-          <h2 className="text-2xl font-semibold ">
-            Confusion Matrix
-          </h2>
+          <h2 className="text-2xl font-semibold ">Confusion Matrix</h2>
           <div className="flex justify-center mt-6">
             <div className="grid grid-cols-2 gap-x-4 gap-y-4">
               {confusionMatrix.map((row, rowIndex) =>
@@ -99,7 +190,7 @@ const AboutUs: React.FC = () => {
       {/* Right Part */}
       <div className="w-1/2 p-8 bg-sidebar">
         <h2 className="text-3xl font-bold">Submit a Query</h2>
-        <form onSubmit={handleFormSubmit} className="mt-4 space-y-4">
+        <form className="mt-4 space-y-4">
           {/* Query */}
           <div>
             <label className="block font-semibold mb-2 relative">
@@ -112,6 +203,8 @@ const AboutUs: React.FC = () => {
             <input
               type="text"
               name="query"
+              value={form.query}
+              onChange={handleChange}
               className="w-full p-2 rounded bg-background border border-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 text-white"
               placeholder="Enter your query"
               required
@@ -131,6 +224,8 @@ const AboutUs: React.FC = () => {
               name="response"
               className="w-full p-2 rounded bg-background border border-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 text-white"
               rows={3}
+              value={form.response}
+              onChange={handleChange}
               placeholder="Enter the response"
               required
             ></textarea>
@@ -147,6 +242,8 @@ const AboutUs: React.FC = () => {
             </label>
             <textarea
               name="context"
+              value={form.context}
+              onChange={handleChange}
               className="w-full p-2 rounded bg-background border border-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 text-white"
               rows={3}
               placeholder="Provide context for the query"
@@ -169,6 +266,8 @@ const AboutUs: React.FC = () => {
                   type="radio"
                   name="result"
                   value="Halucinating"
+                  checked={form.result === "Halucinating"}
+                  onChange={handleChange}
                   className="mr-2"
                   required
                 />
@@ -179,6 +278,8 @@ const AboutUs: React.FC = () => {
                   type="radio"
                   name="result"
                   value="Not Halucinating"
+                  checked={form.result === "Not Halucinating"}
+                  onChange={handleChange}
                   className="mr-2"
                   required
                 />
@@ -188,8 +289,14 @@ const AboutUs: React.FC = () => {
           </div>
 
           <button
+            onClick={handleFormSubmit}
             type="submit"
-            className="w-full bg-violet-500 p-2 rounded text-white font-bold hover:bg-violet-600"
+            className={`w-full p-2 rounded text-white font-bold ${
+              submitted
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-violet-500 hover:bg-violet-600"
+            }`}
+            disabled={submitted}
           >
             Submit
           </button>
