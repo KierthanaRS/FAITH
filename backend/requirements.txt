@@ -4,7 +4,6 @@ pydantic
 motor
 python-dotenv
 azure-cosmos
-bson
 requests
 beautifulsoup4
 lxml

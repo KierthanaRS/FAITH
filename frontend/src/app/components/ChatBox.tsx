@@ -6,13 +6,20 @@ interface ChatBoxProps {
   onSend: (message: string) => void;
   model: string;
   otherModels: string[];
+  historyId:string | null ;
+  user: {
+    id: string
+    avatar: string;
+    name: string;
+    email: string;
+  };
 }
 
-const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend, model, otherModels }) => {
+const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend, model, otherModels,historyId,user }) => {
   const [input, setInput] = useState("");
   const [display, setDisplay] = useState(false);
   const [query, setQuery] = useState("");
-  const [response, setResponse] = useState("");
+  const [botResponse, setBotResponse] = useState("");
   const [modelSelection, setModelSelection] = useState("");
   const [customMessages, setCustomMessages] = useState<
     { sender: string; text: string; metrics?: { hallucinationPercentage: number; reason: string } }[]
@@ -25,35 +32,79 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend, model, otherModels 
     }
   };
 
-  const handleCustomSubmit = (e: React.FormEvent) => {
-    
-    e.preventDefault();  
-    if(!modelSelection.trim() || !query.trim() || !response.trim()) {
+  const handleCustomSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+  
+    // Input Validation
+    if (!modelSelection.trim() || !query.trim() || !botResponse.trim()) {
       alert("Please fill all the fields");
       return;
     }
-    if (query.trim() && response.trim()) {
+  
+    // Append user and bot messages locally
+    const userMessage = { sender: "user", text: query };
+    setCustomMessages((prevMessages) => [...prevMessages, userMessage]);
+  
+    const botMessage = { sender: "bot", text: botResponse };
+    setCustomMessages((prevMessages) => [...prevMessages, botMessage]);
+  
+    const metrics = {
+      hallucinationPercentage: 12,
+      reason: "Inaccurate context provided",
+    };
+  
+    const metricsMessage = { sender: "bot", text: "", metrics };
+    setCustomMessages((prevMessages) => [...prevMessages, metricsMessage]);
+    try {
       
-      const userMessage = { sender: "user", text: query };
-      setCustomMessages((prevMessages) => [...prevMessages, userMessage]);
-
-     
-      const botMessage = { sender: "bot", text: response };
-      setCustomMessages((prevMessages) => [...prevMessages, botMessage]);
-
-     
-      const metrics = {
-        sender: "bot",
-        text: "",
-        metrics: { hallucinationPercentage: 12, reason: "Inaccurate context provided" },
+      // Construct payload
+      const payload = {
+        userid: user.id, 
+        chat: [
+          {
+            modelName: modelSelection,
+            chat: [
+              {
+                chatid: modelSelection, 
+                chatName: modelSelection,
+                messages: [
+                  { usermsg: query, botmsg: botResponse, metrics },
+                ],
+              },
+            ],
+          },
+        ],
       };
-      setCustomMessages((prevMessages) => [...prevMessages, metrics]);
-
+  
+      // POST request to backend
+      const fetchResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chats/addchats`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+  
+      if (!fetchResponse.ok) {
+        throw new Error("Failed to submit custom chat data");
+      }
+  
+      console.log("Custom chat submitted successfully!");
       setModelSelection("");
       setQuery("");
-      setResponse("");
+      setBotResponse("");
+    } catch (error) {
+      console.error("Error submitting custom chat:", error);
+  
+      const errorBotMessage = {
+        sender: "bot",
+        text: "Failed to submit. Please try again later.",
+      };
+      setCustomMessages((prevMessages) => [...prevMessages, errorBotMessage]);
     }
   };
+  
 
   useEffect(() => {
     if (model === "Use other model") {
@@ -61,12 +112,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend, model, otherModels 
     } else {
       setDisplay(false);
     }
-  }, [model]);
+  }, [model,messages,historyId]);
 
   return (
     <div className="flex flex-col h-full bg-background text-text">
       {display ? (
         <div className="p-4 bg-background flex flex-col h-full gap-4">
+      {historyId === null && (
         <form  className="flex flex-col flex-1 space-y-4">
           {/* Model Selection */}
           <div>
@@ -120,8 +172,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend, model, otherModels 
             </label>
             <textarea
               name="response"
-              value={response}
-              onChange={(e) => setResponse(e.target.value)}
+              value={botResponse}
+              onChange={(e) => setBotResponse(e.target.value)}
               className="w-full p-2 rounded bg-background border border-gray-600 focus:outline-none focus:ring-2 focus:ring-violet-500 text-white mt-2"
               rows={3}
               placeholder="Enter the response"
@@ -129,6 +181,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend, model, otherModels 
             ></textarea>
           </div>
           </form>
+          )}
   
           {/* Chat Messages */}
           <div className="flex-1 p-4 overflow-y-auto custom-scrollbar">
@@ -153,6 +206,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend, model, otherModels 
           </div>
   
           {/* Submit Button */}
+          {historyId== null && (
           <div className="mt-4">
             <button
             onClick={handleCustomSubmit}
@@ -162,7 +216,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ messages, onSend, model, otherModels 
               Submit
             </button>
           </div>
-        
+        )}
       </div>
       ) : (
         <>
