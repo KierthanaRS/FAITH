@@ -10,9 +10,5 @@ lxml
 azure-ai-evaluation
 langchain
 langchain_openai
-psycopg2
-psycopg-pool
 langchain_community
-azure-ai-contentsafety
-azure-core
 azure-identity
