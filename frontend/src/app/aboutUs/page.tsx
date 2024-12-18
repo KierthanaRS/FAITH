@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoMdInformationCircleOutline } from "react-icons/io";
 import { useRouter } from "next/navigation";
@@ -12,16 +12,37 @@ const AboutUs: React.FC = () => {
     context: "",
     result: "",
   });
-  const [result, setResult] = useState<{ groundedness?: string; gpt_groundedness?: string; groundedness_reason?: string } | null>(null);
+  const [result, setResult] = useState<{
+    groundedness?: string;
+    gpt_groundedness?: string;
+    groundedness_reason?: string;
+  } | null>(null);
   const [userresult, setUserResult] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [currentCalculation, setCurrentCalculation] = useState<string | null>(
     null
   );
   const [confusionMatrix, setConfusionMatrix] = useState<number[][]>([
-    [50, 10],
-    [5, 35],
+    [0, 0],
+    [0, 0],
   ]);
+  const fetchMatrix = async () => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/test-model/matrix`
+      );
+      const data = await res.json();
+      setConfusionMatrix([
+        [data.TruePositives, data.FalsePositives],
+        [data.FalseNegatives, data.TrueNegatives],
+      ]);
+    } catch (error) {
+      console.error("Error while fetching the confusion matrix:", error);
+    }
+  };
+  useEffect(() => {
+    fetchMatrix();
+  }, []);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -51,18 +72,18 @@ const AboutUs: React.FC = () => {
       const data = await res.json();
       console.log("Response from server:", data);
       setCurrentCalculation(data.result);
-      if(data.data.groundedness==6){
-        setCurrentCalculation("Intentional Hallucination")
+      if (data.data.groundedness == 6) {
+        setCurrentCalculation("Intentional Hallucination");
       }
-      setResult(data.data)
-      setUserResult(data.user_result)
-      //fetch updated matrix
+      setResult(data.data);
+      setUserResult(data.user_result);
       setForm({
         query: "",
         response: "",
         context: "",
         result: "",
       });
+      fetchMatrix();
       setSubmitted(false);
     } catch (error) {
       setSubmitted(false);
@@ -82,7 +103,7 @@ const AboutUs: React.FC = () => {
       </div>
       {/* Left Part */}
       <div className="w-1/2 py-8 px-4 bg-background">
-        <h1 className="text-5xl bg-gradient-to-r from-violet-500 via-white to-pink-500 inline-block text-transparent bg-clip-text">
+        <h1 className="text-5xl bg-gradient-to-r from-violet-500  to-pink-500 inline-block text-transparent bg-clip-text">
           FAITH
         </h1>
         <p className="text-sm mt-2 italic text-gray-300">
@@ -189,7 +210,17 @@ const AboutUs: React.FC = () => {
 
       {/* Right Part */}
       <div className="w-1/2 p-8 bg-sidebar">
-        <h2 className="text-3xl font-bold">Submit a Query</h2>
+        <div className="relative group">
+          <h2 className="text-3xl font-bold mt-5">Submit a Query</h2>
+          <IoMdInformationCircleOutline className="ml-[14.5rem] mt-[-3%] cursor-progress text-violet-500" />
+
+          {/* Tooltip */}
+          <span className="tooltip absolute hidden group-hover:block top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded">
+            Test the platform by entering a prompt, response, context, and
+            hallucination status. Results, including performance metrics like
+            false positives and true values, will appear on the left.
+          </span>
+        </div>
         <form className="mt-4 space-y-4">
           {/* Query */}
           <div>
@@ -271,7 +302,7 @@ const AboutUs: React.FC = () => {
                   className="mr-2"
                   required
                 />
-                Halucinating
+                Hallucinating
               </label>
               <label className="flex items-center">
                 <input
@@ -283,7 +314,7 @@ const AboutUs: React.FC = () => {
                   className="mr-2"
                   required
                 />
-                Not Halucinating
+                Not Hallucinating
               </label>
             </div>
           </div>
