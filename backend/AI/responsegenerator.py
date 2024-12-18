@@ -40,10 +40,10 @@ def BotHandler(prompt: str, model: str, structure = {"prompt_template": "Answer 
 
     try:
         # Dynamically set the environment variables based on the model name
-        api_key = os.getenv(f"AZURE_OPENAI_API_KEY_{model}")
-        endpoint = os.getenv(f"AZURE_OPENAI_ENDPOINT_{model}")
-        deployment = os.getenv(f"AZURE_OPENAI_DEPLOYMENT_{model}")
-        api_version = os.getenv(f"AZURE_OPENAI_API_VERSION_{model}")
+        api_key = os.getenv(f"AZURE_OPENAI_API_KEY_{model.replace("-", "_")}")
+        endpoint = os.getenv(f"AZURE_OPENAI_ENDPOINT_{model.replace("-", "_")}")
+        deployment = os.getenv(f"AZURE_OPENAI_DEPLOYMENT_{model.replace("-", "_")}")
+        api_version = os.getenv(f"AZURE_OPENAI_API_VERSION_{model.replace("-", "_")}")
 
         # Check if environment variables for the model are available
         if not all([api_key, endpoint, deployment, api_version]):

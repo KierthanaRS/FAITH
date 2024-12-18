@@ -111,10 +111,10 @@ def classify_prompt(prompt: str):
 
     # Initialize communication with the Azure OpenAI model
     try:
-        api_key = os.getenv("AZURE_OPENAI_API_KEY_gpt-4o-mini")
-        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_gpt-4o-mini")
-        deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_gpt-4o-mini")
-        api_version = os.getenv("AZURE_OPENAI_API_VERSION_gpt-4o-mini")
+        api_key = os.getenv("AZURE_OPENAI_API_KEY_gpt_4o_mini")
+        endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_gpt_4o_mini")
+        deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_gpt_4o_mini")
+        api_version = os.getenv("AZURE_OPENAI_API_VERSION_gpt_4o_mini")
 
         if not all([api_key, endpoint, deployment, api_version]):
             raise Exception("Missing environment variables for gpt-4o-mini")

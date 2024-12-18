@@ -24,7 +24,7 @@ const ChatPage = () => {
 
   const [user, setUser] = useState<any>(dummyUser);
   const [model, setModel] = useState<string>("gpt-4o-mini");
-  const loggedIn = localStorage.getItem("loggedIn") === "true";
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [textModels, setTextModels] = useState<string[]>([
     "Claude 3",
     "Claude 2",
@@ -61,6 +61,7 @@ const ChatPage = () => {
 
 
   useEffect(() => {
+    localStorage.getItem("loggedIn") === "true";
     if (loggedIn && user && allChats.length === 0) {
       fetchChats(user.id); // Fetch only once if not already fetched
     }
