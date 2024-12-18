@@ -9,9 +9,3 @@ class TestResults(BaseModel):
     FalsePositives: int
     FalseNegatives: int
 
-class TestChats(BaseModel):
-    query: str
-    response: str
-    context: str
-    expectedResult: Any
-    calculatedResults: Dict[str, Any]  
