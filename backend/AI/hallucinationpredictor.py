@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from azure.ai.evaluation import GroundednessEvaluator
-from contextgenerator import contextgenerator
+from .contextgenerator import contextgenerator
 
 # Load environment variables from .env file
 load_dotenv()
