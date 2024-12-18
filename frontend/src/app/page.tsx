@@ -106,7 +106,7 @@ const ChatPage = () => {
       model.chat.map((c: any) => ({
         id: c.chatid,
         name: c.chatName,
-        messages: c.messages, // These messages include usermsg and botmsg
+        messages: c.messages, 
       }))
     );
   
@@ -144,8 +144,65 @@ const ChatPage = () => {
     const date = new Date();
     const timestamp = date.toISOString().replace(/[-:.]/g, ''); 
     const randomName = Math.random().toString(36).substring(2, 8); 
+    return `${timestamp}-${randomName}`;
   };
-  // Handle sending a message
+  const createChat=async(message:string, model:string)=> {
+    const id = generateUniqueId(); // Generate a unique ID
+    const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/bots/create-chat`;
+  
+    try {
+      // Call the backend API
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: message,
+          model: model,
+        }),
+      });
+  
+      // Parse the JSON response
+      if (!response.ok) {
+        throw new Error("Failed to create chat");
+      }
+  
+      const data = await response.json();
+      return { chatId: id, chatName: data.chat_name };
+    } catch (error) {
+      console.error("Error creating chat:", error);
+      throw error;
+    }
+  }
+
+  const generateResponse=async(message:string, model: string)=>{
+    const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/bots/generate-response`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: message,
+          model: model,
+        }),
+      });
+  
+      // Parse the JSON response
+      if (!response.ok) {
+        throw new Error("Failed to generate response");
+      }
+  
+      const data = await response.json();
+      return {bot_response: data.bot_response };
+    } catch (error) {
+      console.error("Error generating response", error);
+      throw error;
+    }
+
+  }
   const handleSend =async (message: string) => {
     const userMessage = { sender: "user", text: message };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
@@ -156,16 +213,23 @@ const ChatPage = () => {
     try {
       // Find the selected chat from history
       const selectedChat = history.find((chat) => chat.id === selectedHistoryId);
-  
-      if (!selectedChat) {
-        console.error("No chat selected to update");
-        return;
+
+      // Variables for chat ID and name
+      let id = selectedChat?.id;
+      let name = selectedChat?.name;
+      let flag=false;
+      if (!selectedChat || selectedHistoryId == null) {
+        // Create a new chat if none is selected
+        const chatData = await createChat(message, "gpt-4o-mini");
+        id = chatData.chatId;
+        name = chatData.chatName.replace(" ", "").replace('"', "").replace('"',"")
+        flag=true;
       }
   
-      // Prepare new message to send
+      const {bot_response}= await  generateResponse(message,model)
       const newMessage = {
         usermsg: message,
-        botmsg: "This is a placeholder response from the bot.",
+        botmsg: bot_response,
         metrics: {
           hallucinationPercentage: 12,
           reason: "Response needs more context.",
@@ -180,9 +244,9 @@ const ChatPage = () => {
             modelName: model,
             chat: [
               {
-                chatid: selectedChat.id, // Use chatid from selected history
-                chatName: selectedChat.name, // Use chatName from selected history
-                messages: [...selectedChat.messages, newMessage], // Append new message
+                chatid: id, // Use chatid from selected history
+                chatName: name, // Use chatName from selected history
+                messages: [...(selectedChat?.messages || []), newMessage], // Append new message
               },
             ],
           },
@@ -202,10 +266,13 @@ const ChatPage = () => {
       if (response.ok) {
         const responseData = await response.json();
   
-        // Update bot message with actual response
+        if(flag){
+          fetchChats(user.id)
+          // handleHistorySelect(newHistoryid)
+        }
         const updatedBotMessage = {
           sender: "bot",
-          text: responseData.botResponse || "Success!",
+          text: bot_response || "Success!",
           metrics: responseData.metrics || { hallucinationPercentage: 12, reason: "Generic response" },
         };
   

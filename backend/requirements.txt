@@ -4,3 +4,12 @@ pydantic
 motor
 python-dotenv
 azure-cosmos
+requests
+beautifulsoup4
+lxml
+azure-ai-evaluation
+langchain
+langchain_openai
+psycopg2
+psycopg-pool
+langchain_community
