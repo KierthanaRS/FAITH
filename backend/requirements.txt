@@ -13,3 +13,5 @@ langchain_openai
 psycopg2
 psycopg-pool
 langchain_community
+azure-ai-content-safety
+azure-core
