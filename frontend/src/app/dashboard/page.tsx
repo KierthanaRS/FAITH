@@ -22,7 +22,7 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics/`);
   
         const data = await response.json();
   
