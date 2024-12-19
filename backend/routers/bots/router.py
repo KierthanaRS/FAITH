@@ -36,22 +36,22 @@ def quality_generator(score:int):
 async def metrics_evaluator(query,response,model,halucination_score):
     print(query,response,model)
     halucination_score = str(int(halucination_score))
-    # hateunfairness = evaluate_hateunfairness(query,response)
-    # selfharm = evaluate_selfharm(query,response)
-    # sexual = evaluate_sexual(query,response)
-    # violence = evaluate_violence(query,response)
+    hateunfairness = evaluate_hateunfairness(query,response)
+    selfharm = evaluate_selfharm(query,response)
+    sexual = evaluate_sexual(query,response)
+    violence = evaluate_violence(query,response)
     
-    # hateunfairness_quality = quality_generator(
-    #     hateunfairness.hate_unfairness_score)
-    # selfharm_quality = quality_generator(selfharm.self_harm_score)
-    # sexual_quality = quality_generator(sexual.sexual_score)
-    # violence_quality = quality_generator(violence.violence_score)
+    hateunfairness_quality = quality_generator(
+        hateunfairness.hate_unfairness_score)
+    selfharm_quality = quality_generator(selfharm.self_harm_score)
+    sexual_quality = quality_generator(sexual.sexual_score)
+    violence_quality = quality_generator(violence.violence_score)
     
     # testing
-    hateunfairness_quality = "Very low"
-    selfharm_quality = "Very low"
-    sexual_quality = "Very low"
-    violence_quality = "Very low"
+    # hateunfairness_quality = "Very low"
+    # selfharm_quality = "Very low"
+    # sexual_quality = "Very low"
+    # violence_quality = "Very low"
     # 
 
     analytics_collection = db["Analytics"]
