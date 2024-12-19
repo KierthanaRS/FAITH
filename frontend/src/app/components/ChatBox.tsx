@@ -276,7 +276,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                 onClick={handleCustomSubmit}
                 type="submit"
                 disabled={!submit}
-                className="w-full p-2 bg-gray-700 text-white font-bold hover:bg-gray-800 rounded-lg"
+                className={`w-full p-2 bg-gray-700 text-white font-bold rounded-lg ${
+                  submit===true
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-gray-700 hover:bg-gray-800"
+                }`}
+                
               >
                 Submit
               </button>

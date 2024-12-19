@@ -76,14 +76,14 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
         <div className="font-semibold mb-2 relative group flex">
           <h1
             onClick={() => router.push("/aboutUs")}
-            className="text-5xl bg-gradient-to-r from-violet-500 via-white to-pink-500 inline-block text-transparent bg-clip-text cursor-pointer"
+            className="text-5xl bg-gradient-to-r from-violet-500  to-pink-500 inline-block text-transparent bg-clip-text cursor-pointer"
           >
             {companyName}
           </h1>
          
             <IoMdInformationCircleOutline className="ml-[2rem] mt-[6%] text-violet-500 cursor-progress" />
             <span className="tooltip hidden absolute top-full right-0 mt-2 w-48 p-2 bg-black text-white text-sm rounded group-hover:block">
-              Click the logo to know more about the company.
+              Click the logo to know more about our platform.
             </span>
           </div>
         </div>

@@ -12,3 +12,4 @@ langchain
 langchain_openai
 langchain_community
 azure-identity
+pydantic[email]
