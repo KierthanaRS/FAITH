@@ -13,4 +13,15 @@ router = APIRouter()
 
 @router.get("/")
 async def get_analytics():
-    return "hello"
+    try:
+        analytics_collection = db["Analytics"]
+        data = await analytics_collection.find().to_list()
+        models = []
+        for i in data:
+            models.append(i["modelName"])
+            del i["_id"]
+        print(data)
+        return {"data": data, "models": models}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))

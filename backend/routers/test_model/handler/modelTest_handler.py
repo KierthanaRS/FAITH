@@ -19,7 +19,10 @@ async def test_model_handler(query: str, response: str, context: str, result: st
             FalseNegatives=0
         )
         await test_model_collection.insert_one(data.dict())
-    # data = TestResults(**data)
+    try:
+        data = TestResults(**data)
+    except:
+        pass
     if res == result and res == "Not Halucinating":
         data.TruePositives = data.TruePositives + 1
     elif res == result and res == "Halucinating":

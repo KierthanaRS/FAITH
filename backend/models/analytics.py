@@ -11,8 +11,8 @@ def default_metrics():
     }
 class Analytics(BaseModel):
     modelName: str
-    promptCount: int
-    hallucinationCount: Dict[int,int] = Field(default_factory=lambda: {1:0,2:0,3:0,4:0,5:0,6:0})
+    promptCount: int = Field(default=0)
+    hallucinationCount: Dict[str,int] = Field(default_factory=lambda: {'1':0,'2':0,'3':0,'4':0,'5':0,'6':0})
     violenceMetricsCount: Dict[str,int] = Field(default_factory=default_metrics)
     sexualMetricsCount: Dict[str,int] = Field(default_factory=default_metrics)
     selfHarmMetricsCount: Dict[str,int] = Field(default_factory=default_metrics)
