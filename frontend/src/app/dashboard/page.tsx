@@ -90,10 +90,7 @@ const Dashboard: React.FC = () => {
   const handleApplyFilters = (
     selectedModels: string[],
     selectedMetrics: string[]
-
   ) => {
-    
-
     const filtered = originalData
       .filter((item) => selectedModels.includes(item.model))
       .map((item) => ({
@@ -104,9 +101,10 @@ const Dashboard: React.FC = () => {
           )
         ),
       }));
-
+  
     setFilteredData(filtered);
   };
+  
 
   return (
     <div className="flex h-screen w-full overflow-hidden">

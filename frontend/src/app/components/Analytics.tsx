@@ -9,9 +9,7 @@ interface AnalyticsProps {
   data: {
     model: string;
     metrics: {
-      [key: string]: {
-        [partition: string]: string; // Partition percentages as strings
-      };
+      [key: string]:number;
     };
   }[];
 }
