@@ -1,5 +1,7 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from routers.chats.router import router as chats_router
 from routers.bots.router import router as bots_router
 from routers.analytics_router import router as analytics_router
