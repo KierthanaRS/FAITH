@@ -27,4 +27,4 @@ COPY ./ ./
 EXPOSE 8000
 
 # Command to run the FastAPI app with uvicorn (use --host 0.0.0.0 to allow external access)
-CMD ["/opt/venv/bin/uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/opt/venv/bin/gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "server:app"]

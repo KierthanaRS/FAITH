@@ -1,4 +1,5 @@
 fastapi
+gunicorn
 uvicorn
 pydantic[email]
 motor
