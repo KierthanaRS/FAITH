@@ -17,6 +17,7 @@ interface ChatBoxProps {
     name: string;
     email: string;
   };
+  fetching: boolean;
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({
@@ -26,13 +27,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   otherModels,
   historyId,
   user,
+  fetching,
 }) => {
   const [input, setInput] = useState("");
   const [display, setDisplay] = useState(false);
   const [query, setQuery] = useState("");
   const [botResponse, setBotResponse] = useState("");
   const [modelSelection, setModelSelection] = useState("");
-  const[submit, setSubmit] = useState(true);
+  const [submit, setSubmit] = useState(true);
   const [customMessages, setCustomMessages] = useState<
     {
       sender: string;
@@ -47,7 +49,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({
       setInput("");
     }
   };
-  const calculateMetrics = async (user_message: string, response: string) => {
+  const calculateMetrics = async (
+    user_message: string,
+    response: string,
+    model: string
+  ) => {
     const endpoint = `${process.env.NEXT_PUBLIC_BACKEND_URL}/bots/generate-metrics`;
     try {
       const res = await fetch(endpoint, {
@@ -58,6 +64,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         body: JSON.stringify({
           user_message,
           response,
+          model,
         }),
       });
       if (!res.ok) {
@@ -102,7 +109,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
     try {
       const { hallucination, reason } = await calculateMetrics(
         query,
-        botResponse
+        botResponse,
+        modelSelection
       );
       const metrics = {
         hallucinationPercentage: Math.floor(hallucination),
@@ -270,23 +278,21 @@ const ChatBox: React.FC<ChatBoxProps> = ({
           </div>
 
           {/* Submit Button */}
-         
-            <div className="mt-4">
-              <button
-                onClick={handleCustomSubmit}
-                type="submit"
-                disabled={!submit}
-                className={`w-full p-2 bg-gray-700 text-white font-bold rounded-lg ${
-                  submit===true
-                    ? "bg-gray-500 cursor-not-allowed"
-                    : "bg-gray-700 hover:bg-gray-800"
-                }`}
-                
-              >
-                Submit
-              </button>
-            </div>
-        
+
+          <div className="mt-4">
+            <button
+              onClick={handleCustomSubmit}
+              type="submit"
+              disabled={!submit}
+              className={`w-full p-2 bg-gray-700 text-white font-bold rounded-lg ${
+                submit === true
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-gray-700 hover:bg-gray-800"
+              }`}
+            >
+              Submit
+            </button>
+          </div>
         </div>
       ) : (
         <>
@@ -336,7 +342,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({
             />
             <button
               onClick={handleSend}
-              className="ml-4 bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800"
+              className={`ml-4 text-white px-4 py-2 rounded-md 
+                ${
+                  fetching === true
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-gray-700 hover:bg-gray-800"
+                }`}
             >
               Send
             </button>

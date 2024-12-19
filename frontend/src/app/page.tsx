@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import LeftSidebar from "./components/LeftSideBar";
 import RightSidebar from "./components/RightSideBar";
 import ChatBox from "./components/ChatBox";
@@ -7,14 +7,30 @@ import { useRouter } from "next/navigation";
 
 const ChatPage = () => {
   const router = useRouter();
-
+  const [modelChanged,setModelChanged] = useState(false);
   const [messages, setMessages] = useState<
     { sender: string; text: string; metrics?: { hallucinationPercentage: number; reason: string } }[]
   >([]);
-  const [history, setHistory] = useState<{ id: string; name: string; messages: any[] }[]>([]);
+  const [history, setHistory] = useState<{ id: string; name: string; messages: { usermsg: string; botmsg: string; metrics?: { hallucinationPercentage: number; reason: string } }[] }[]>([]);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
-  const [allChats, setAllChats] = useState<any[]>([]); // Store all fetched chat data
+  interface Chat {
+    modelName: string;
+    chat: {
+      chatid: string;
+      chatName: string;
+      messages: {
+        usermsg: string;
+        botmsg: string;
+        metrics?: {
+          hallucinationPercentage: number;
+          reason: string;
+        };
+      }[];
+    }[];
+  }
 
+  const [allChats, setAllChats] = useState<Chat[]>([]); // Store all fetched chat data
+  const [isFetching, setIsFetching] = useState<boolean>(false);
   const dummyUser = {
     id: "675af187fc14f57242759769",
     avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyWLjkYKGswBE2f9mynFkd8oPT1W4Gx8RpDQ&s",
@@ -22,10 +38,18 @@ const ChatPage = () => {
     email: "johndoe@contoso.com",
   };
 
-  const [user, setUser] = useState<any>(dummyUser);
+  interface User {
+    id: string;
+    avatar: string;
+    name: string;
+    email: string;
+  }
+
+  const [user] = useState<User>(dummyUser);
   const [model, setModel] = useState<string>("gpt-4o-mini");
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
-  const [textModels, setTextModels] = useState<string[]>([
+
+  const [textModels] = useState<string[]>([
     "Claude 3",
     "Claude 2",
     "Claude 1",
@@ -61,17 +85,18 @@ const ChatPage = () => {
 
 
   useEffect(() => {
-    localStorage.getItem("loggedIn") === "true";
+    const x=localStorage.getItem("loggedIn") === "true";
+    setLoggedIn(x);
     if (loggedIn && user && allChats.length === 0) {
       fetchChats(user.id); // Fetch only once if not already fetched
     }
-  }, [loggedIn, user]);
+  });
 
   useEffect(() => {
     if (allChats.length > 0) {
       updateHistoryForModel(model);
     }
-  }, [model, allChats]);
+  }, [model]);
 
   // Fetch chats from the backend
   const fetchChats = async (userid: string) => {
@@ -82,6 +107,7 @@ const ChatPage = () => {
       if (data && data.length > 0) {
         setAllChats(data[0]?.chat || []); // Store all chat data
         updateHistoryForModel(model, data[0]?.chat); // Initialize history for the current model
+        // setSelectedHistoryId(id);
       } else {
         setHistory([]);
         setMessages([]);
@@ -89,22 +115,24 @@ const ChatPage = () => {
     } catch (error) {
       console.error("Error fetching chats:", error);
     }
+    
   };
 
   // Update history and messages based on the selected model
   const updateHistoryForModel = (selectedModel: string, chats = allChats) => {
-    let filteredChats = [];
+  
+    let filteredChats: Chat[] = [];
   
     if (selectedModel === "Use other model") {
        filteredChats=[];
     } else {
       // Filter only for the selected model
-      filteredChats = chats.filter((chat: any) => chat.modelName === selectedModel);
+      filteredChats = chats.filter((chat: Chat) => chat.modelName === selectedModel);
     }
   
     // Flatten chats to retrieve the messages
-    const chatHistory = filteredChats.flatMap((model: any) =>
-      model.chat.map((c: any) => ({
+    const chatHistory = filteredChats.flatMap((model: Chat) =>
+      model.chat.map((c: { chatid: string; chatName: string; messages: { usermsg: string; botmsg: string; metrics?: { hallucinationPercentage: number; reason: string } }[] }) => ({
         id: c.chatid,
         name: c.chatName,
         messages: c.messages, 
@@ -113,20 +141,37 @@ const ChatPage = () => {
   
     setHistory(chatHistory);
   
-    // Automatically display all messages for "Use other model"
-    if (selectedModel === "Use other model") {
-      const allOtherModelMessages = chatHistory.flatMap((chat) =>
-        chat.messages.flatMap((msg: any) => [
+    // // Automatically display all messages for "Use other model"
+    // if (selectedModel === "Use other model") {
+    //   const allOtherModelMessages = chatHistory.flatMap((chat) =>
+    //     chat.messages.flatMap((msg: { usermsg: string; botmsg: string; metrics?: { hallucinationPercentage: number; reason: string } }) => [
+    //       { sender: "user", text: msg.usermsg },
+    //       { sender: "bot", text: msg.botmsg, metrics: msg.metrics },
+    //     ])
+    //   );
+    //   setMessages(allOtherModelMessages);
+    // } else {
+    //   setMessages([]);
+    // }
+    
+    if(!modelChanged){
+      const selectedChat = history.find((chat) => chat.id === selectedHistoryId);
+      if (selectedChat) {
+        const userMessages = selectedChat.messages.flatMap((msg) => [
           { sender: "user", text: msg.usermsg },
           { sender: "bot", text: msg.botmsg, metrics: msg.metrics },
-        ])
-      );
-      setMessages(allOtherModelMessages);
-    } else {
-      setMessages([]);
+        ]);
+        setMessages(userMessages);
+      }
     }
-  
-    setSelectedHistoryId(null);
+    if(modelChanged){
+      setSelectedHistoryId(null);
+      setMessages([]);
+      console.log(messages,model,modelChanged);
+      setModelChanged(false);
+      console.log(model,modelChanged);
+    }
+    // setSelectedHistoryId(null);
   };
   
 
@@ -210,6 +255,7 @@ const ChatPage = () => {
 
     const botMessage = { sender: "bot", text: "Thinking...." };
     setMessages((prevMessages) => [...prevMessages, botMessage]);
+    setIsFetching(true);
 
     try {
       // Find the selected chat from history
@@ -219,12 +265,14 @@ const ChatPage = () => {
       let id = selectedChat?.id;
       let name = selectedChat?.name;
       let flag=false;
+      let newid=null;
       if (!selectedChat || selectedHistoryId == null) {
         // Create a new chat if none is selected
         const chatData = await createChat(message, "gpt-4o-mini");
         id = chatData.chatId;
         name = chatData.chatName.replace(" ", "").replace('"', "").replace('"',"")
         flag=true;
+        newid=id;
       }
   
       const {bot_response,hallucination,reason}= await  generateResponse(message,model)
@@ -267,8 +315,8 @@ const ChatPage = () => {
   
       if (response.ok) {
         if(flag){
-          fetchChats(user.id)
-          // handleHistorySelect(newHistoryid)
+          fetchChats(user.id);
+          setSelectedHistoryId(newid);
         }
         const updatedBotMessage = {
           sender: "bot",
@@ -294,6 +342,7 @@ const ChatPage = () => {
       } else {
         throw new Error("Failed to send chat data");
       }
+      
     } catch (error) {
       console.error("Error:", error);
   
@@ -306,6 +355,9 @@ const ChatPage = () => {
         ...prevMessages.slice(0, -1),
         errorBotMessage,
       ]);
+    }
+    finally{
+      setIsFetching(false);
     }
   };
 
@@ -323,7 +375,8 @@ const ChatPage = () => {
     if (selectedModel === "Test our model") {
       router.push("/aboutUs");
     }
-    setModel(selectedModel); 
+    setModel(selectedModel);
+    setModelChanged(true);
   };
  
   return (
@@ -347,6 +400,7 @@ const ChatPage = () => {
       />
       <div className="flex-1">
         <ChatBox messages={messages} onSend={handleSend} model={model} otherModels={textModels} historyId={selectedHistoryId} user={user}
+        fetching={isFetching}
       />
       </div>
       <RightSidebar
