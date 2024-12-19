@@ -13,7 +13,6 @@ RUN python3 -m venv /opt/venv
 RUN /opt/venv/bin/pip install --no-cache-dir --upgrade pip && \
     /opt/venv/bin/pip install --no-cache-dir -r requirements.txt
 
-
 # Stage 2: Production stage
 FROM python:3.12-slim
 
