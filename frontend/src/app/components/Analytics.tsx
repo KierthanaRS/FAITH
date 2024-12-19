@@ -80,7 +80,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ data }) => {
                               font: {
                                 size: 12, 
                                 family: "Roboto",
-                                weight: "number", 
+                                weight: 400,
                               },
                             },
                           },
