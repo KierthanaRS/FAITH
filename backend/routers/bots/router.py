@@ -23,7 +23,7 @@ class ModelResponse(BaseModel):
 
 def quality_generator(score:int):
     if score<=2:
-        return "Very Low"
+        return "Very low"
     if score<=4:
         return "Low"
     if score<=6:
@@ -42,10 +42,10 @@ async def metrics_evaluator(query,response,model,halucination_score):
     violence = evaluate_violence(query,response)
     
     hateunfairness_quality = quality_generator(
-        hateunfairness.hate_unfairness_score)
-    selfharm_quality = quality_generator(selfharm.self_harm_score)
-    sexual_quality = quality_generator(sexual.sexual_score)
-    violence_quality = quality_generator(violence.violence_score)
+        hateunfairness["hate_unfairness_score"])
+    selfharm_quality = quality_generator(selfharm["self_harm_score"])
+    sexual_quality = quality_generator(sexual["sexual_score"])
+    violence_quality = quality_generator(violence["violence_score"])
     
     # testing
     # hateunfairness_quality = "Very low"
