@@ -61,7 +61,8 @@ const ChatPage = () => {
 
 
   useEffect(() => {
-    localStorage.getItem("loggedIn") === "true";
+    const x = localStorage.getItem("loggedIn") === "true";
+    setLoggedIn(x);
     if (loggedIn && user && allChats.length === 0) {
       fetchChats(user.id); // Fetch only once if not already fetched
     }

@@ -13,7 +13,10 @@ async def matrix_handler():
             FalseNegatives=0
         )
         await test_model_collection.insert_one(data.dict())
-    data = TestResults(**data)
+    try:
+        data = TestResults(**data)
+    except:
+        pass
     data_dict = data.dict()
     del data_dict["totalPrompts"]
     return data_dict

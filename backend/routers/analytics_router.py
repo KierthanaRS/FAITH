@@ -13,4 +13,5 @@ router = APIRouter()
 
 @router.get("/")
 async def get_analytics():
-    return "hello"
+    
+    return None
