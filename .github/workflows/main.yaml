@@ -24,7 +24,7 @@ jobs:
 
     - name: Build Docker images for Frontend and Backend
       run: |
-        docker build -f ./frontend/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/faith-frontend:latest ./frontend
+        docker build -f ./frontend/Dockerfile --build-args NEXT_PUBLIC_BACKEND_URL=${{ secrets.BACKEND_API_URL }} -t ${{ secrets.ACR_LOGIN_SERVER }}/faith-frontend:latest ./frontend
         docker build -f ./backend/Dockerfile -t ${{ secrets.ACR_LOGIN_SERVER }}/faith-backend:latest ./backend
 
     - name: Log in to ACR

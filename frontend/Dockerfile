@@ -13,6 +13,9 @@ RUN npm i --legacy-peer-deps
 # Copy the entire project into the container
 COPY ./ ./
 
+ARG NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+
 # Build the Next.js application
 RUN npm run build
 
@@ -30,6 +33,9 @@ RUN npm install --legacy-peer-deps
 
 # Expose the port that the app will run on
 EXPOSE 3000
+
+ARG NEXT_PUBLIC_BACKEND_URL
+ENV NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
 
 # Start the application in production mode
 CMD ["npm", "run", "start"]
