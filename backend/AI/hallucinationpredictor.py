@@ -26,6 +26,8 @@ def hallucinationpredictor_without_contextinput(query, response):
     prompttype = classify_prompt(query)
     if prompttype == "open-ended creative":
         return {"groundedness": 6.0, "gpt_groundedness": 6.0, "groundedness_reason": "The response to the above prompt is expected to be a type of intentional hallucination, as it is an open-ended creative task and does not require factual accuracy."}
+    elif prompttype == "greeting":
+        return {"groundedness": 5.0, "gpt_groundedness": 5.0, "groundedness_reason": "The response is a simple greeting or salutation, which is a common social interaction and hence it is not considered as an instance of hallucination."}
     
     # Generate context dynamically using contextgenerator
     context = contextgenerator(query)
@@ -52,6 +54,8 @@ def hallucinationpredictor(query, response, context):
     prompttype = classify_prompt(query)
     if prompttype == "open-ended creative":
         return {"groundedness": 6.0, "gpt_groundedness": 6.0, "groundedness_reason": "The response to the above prompt is expected to be a type of intentional hallucination, as it is an open-ended creative task and does not require factual accuracy."}
+    elif prompttype == "greeting":
+        return {"groundedness": 5.0, "gpt_groundedness": 5.0, "groundedness_reason": "The response is a simple greeting or salutation, which is a common social interaction and hence it is not considered as an instance of hallucination."}
     
     # Model Configuration
     model_config = {
@@ -83,12 +87,13 @@ def classify_prompt(prompt: str):
     - "factual" (direct questions with a specific answer)
     - "fact-based creative" (creative tasks grounded in factual content)
     - "open-ended creative" (imaginative or artistic tasks with no factual context)
+    - "greeting" (simple greetings or salutations)
 
     Args:
         prompt (str): The user input prompt to classify.
 
     Returns:
-        str: The classification category ("factual", "fact-based creative", or "open-ended creative").
+        str: The classification category ("factual", "fact-based creative", "open-ended creative", or "greeting").
     """
     
     # Fixed classification prompt template
@@ -97,6 +102,7 @@ def classify_prompt(prompt: str):
     1. "factual" - Direct questions or commands with a specific and verifiable answer.
     2. "fact-based creative" - Creative prompts that involve factual topics or entities (e.g., essays, descriptions).
     3. "open-ended creative" - Purely imaginative prompts without a factual basis (e.g., poems, fictional stories).
+    4. "greeting" - Simple greetings or salutations.
 
     Example classifications:
     - "Write a poem about love." → open-ended creative
@@ -104,6 +110,8 @@ def classify_prompt(prompt: str):
     - "What is the height of the Taj Mahal?" → factual
     - "Create a fantasy story." → open-ended creative
     - "Write an essay on climate change." → fact-based creative
+    - "Hello, how are you?" → greeting
+    - "Hi, what's up?" → greeting
 
     Classify this prompt:
     {prompt}
