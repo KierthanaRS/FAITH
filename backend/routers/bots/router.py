@@ -1,4 +1,4 @@
-from fastapi import APIRouter,HTTPException
+from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 
 from models.analytics import Analytics
@@ -91,22 +91,24 @@ async def create_chat(request: ChatRequest):
 
 
 @router.post("/generate-response")
-async def generate_response(request: ChatRequest):
+async def generate_response(request: ChatRequest, background_tasks: BackgroundTasks):
     try:
         bot_response = BotHandler(prompt=request.message, model=request.model)
         response= bot_response.get("response", "No response generated")
         hallucination= hallucinationpredictor_without_contextinput(request.message, response)
-        await metrics_evaluator(request.message, response, request.model, hallucination['groundedness'])
+        # await metrics_evaluator(request.message, response, request.model, hallucination['groundedness'])
+        background_tasks.add_task(metrics_evaluator, request.message, response, request.model, hallucination['groundedness'])
         return {"bot_response": response, "hallucination": hallucination}
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/generate-metrics")
-async def generate_response(request:ModelResponse):
+async def generate_response(request:ModelResponse, background_tasks: BackgroundTasks):
     try:
         hallucination=hallucinationpredictor_without_contextinput(request.user_message,request.response)
-        await metrics_evaluator(request.user_message, request.response, request.model, hallucination['groundedness'])
+        # await metrics_evaluator(request.user_message, request.response, request.model, hallucination['groundedness'])
+        background_tasks.add_task(metrics_evaluator, request.user_message, request.response, request.model, hallucination['groundedness'])
         return {"hallucination": hallucination}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
