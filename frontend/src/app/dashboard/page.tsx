@@ -11,12 +11,14 @@ const Dashboard: React.FC = () => {
   const [originalData, setOriginalData] = useState<
     { model: string; metrics: { [key: string]: number } }[]
   >([]);
+  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+  const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
   const metrics = [
-    "Hallucination ",
+    "Hallucination",
     "Violence",
-    "Self Harm",
+    "SelfHarm",
     "Sexual",
-    "Hate Unfairness",
+    "HateUnfairness",
     
   ];
   useEffect(() => {
@@ -70,13 +72,14 @@ const Dashboard: React.FC = () => {
           };
         });
   
-        // Debugging Log
-        console.log("Transformed Data:", transformedData);
+       
   
         // Update States
         setModels(data.models);
-        setOriginalData(transformedData); // Store original data
-        setFilteredData(transformedData); // Initialize filtered data
+        setOriginalData(transformedData); 
+        setFilteredData(transformedData);
+        setSelectedModels(data.models);
+        setSelectedMetrics(metrics);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -93,17 +96,25 @@ const Dashboard: React.FC = () => {
   ) => {
     const filtered = originalData
       .filter((item) => selectedModels.includes(item.model))
-      .map((item) => ({
-        model: item.model,
-        metrics: Object.fromEntries(
-          Object.entries(item.metrics).filter(([metric]) =>
-            selectedMetrics.includes(metric)
-          )
-        ),
-      }));
+      .map((item) => {
+        const filteredMetrics = Object.entries(item.metrics)
+          .filter(([metric]) => selectedMetrics.includes(metric)) 
+          .reduce((acc, [key, value]) => {
+            acc[key] = value; 
+            return acc;
+          }, {} as { [key: string]: number }); 
+  
+        return {
+          model: item.model,
+          metrics: filteredMetrics,
+        };
+      })
+     
+      .filter((item) => Object.keys(item.metrics).length > 0);
   
     setFilteredData(filtered);
   };
+  
   
 
   return (
@@ -112,6 +123,10 @@ const Dashboard: React.FC = () => {
         models={models}
         metrics={metrics}
         onApplyFilters={handleApplyFilters}
+        selectedModels={selectedModels} 
+        selectedMetrics={selectedMetrics}
+        setSelectedModels={setSelectedModels}
+        setSelectedMetrics={setSelectedMetrics}
       />
       <div className="flex-grow overflow-y-auto">
         <Analytics data={filteredData} />

@@ -15,9 +15,7 @@ interface AnalyticsProps {
 }
 
 const Analytics: React.FC<AnalyticsProps> = ({ data }) => {
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  
 
   return (
     <div className="relative w-full max-w-screen-lg mx-auto p-4">

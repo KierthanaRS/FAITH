@@ -18,6 +18,8 @@ interface ChatBoxProps {
     email: string;
   };
   fetching: boolean;
+  modelSelection: string;
+  setModelSelection: (model: string) => void;
 }
 
 const ChatBox: React.FC<ChatBoxProps> = ({
@@ -28,12 +30,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({
   historyId,
   user,
   fetching,
+  modelSelection,
+  setModelSelection
 }) => {
   const [input, setInput] = useState("");
   const [display, setDisplay] = useState(false);
   const [query, setQuery] = useState("");
   const [botResponse, setBotResponse] = useState("");
-  const [modelSelection, setModelSelection] = useState("");
+  
   const [submit, setSubmit] = useState(true);
   const [customMessages, setCustomMessages] = useState<
     {
@@ -271,6 +275,16 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
                     {/* <p className="text-sm">{`Hallucination: ${msg.metrics.hallucinationPercentage}%`}</p> */}
                     <p className="text-xs mt-2 font-serif italic">{`Reason: ${msg.metrics.reason}`}</p>
+                    <p className="text-xs mt-2 text-white font-semibold">
+                      {`Confidence Score: ${
+                        msg.metrics.hallucinationPercentage === 1 ||
+                        msg.metrics.hallucinationPercentage === 5
+                          ? "100%"
+                          : msg.metrics.hallucinationPercentage === 6
+                          ? "60%"
+                          : "80%"
+                      }`}
+                    </p>
                   </div>
                 )}
               </div>
@@ -324,8 +338,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                       </div>
                     )}
 
-                    {/* <p className="text-sm">{`Hallucination: ${msg.metrics.hallucinationPercentage}%`}</p> */}
                     <p className="text-xs mt-2 font-serif italic">{`Reason: ${msg.metrics.reason}`}</p>
+                    <p className="text-xs mt-2 text-white font-semibold">
+                      {`Confidence Score: ${
+                        msg.metrics.hallucinationPercentage === 1 ||
+                        msg.metrics.hallucinationPercentage === 5
+                          ? "100%"
+                          : msg.metrics.hallucinationPercentage === 6
+                          ? "60%"
+                          : "80%"
+                      }`}
+                    </p>
                   </div>
                 )}
               </div>

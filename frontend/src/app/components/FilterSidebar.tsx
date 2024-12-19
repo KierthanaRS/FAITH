@@ -1,24 +1,30 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 interface FilterSidebarProps {
   models: string[];
   metrics: string[];
   onApplyFilters: (selectedModels: string[], selectedMetrics: string[]) => void;
+  selectedModels: string[]; 
+  selectedMetrics: string[];
+  setSelectedModels: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedMetrics: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   models,
   metrics,
   onApplyFilters,
+  selectedModels,
+  selectedMetrics,
+  setSelectedModels,
+  setSelectedMetrics
 }) => {
-  const [selectedModels, setSelectedModels] = useState<string[]>([]);
-  const [selectedMetrics, setSelectedMetrics] = useState<string[]>([]);
-  useEffect(()=>{
-    setSelectedModels(models); 
-    setSelectedMetrics(metrics); 
-  },[models,metrics]);
+ 
 
-  
+  // useEffect(() => {
+  //   setSelectedModels(initialSelectedModels);
+  //   setSelectedMetrics(initialSelectedMetrics);
+  // }, [initialSelectedModels, initialSelectedMetrics]);
 
   const handleModelChange = (model: string) => {
     setSelectedModels((prev) =>
@@ -41,10 +47,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   };
 
   const handleClear = () => {
-    setSelectedModels([]); 
-    setSelectedMetrics([]); 
+    setSelectedModels([]);
+    setSelectedMetrics([]);
     onApplyFilters([], []);
+    console.log(selectedModels, selectedMetrics);
   };
+
   return (
     <div className="p-4 bg-sidebar text-white w-64">
       <h2 className="text-xl font-bold mb-4">Filters</h2>
@@ -88,9 +96,12 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       >
         Clear Filter
       </button>
-
     </div>
   );
 };
 
 export default FilterSidebar;
+function setSelectedModels(arg0: (prev: any) => any) {
+  throw new Error("Function not implemented.");
+}
+
