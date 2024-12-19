@@ -75,6 +75,7 @@ async def metrics_evaluator(query,response,model,halucination_score):
     data.hallucinationCount[halucination_score] = data.hallucinationCount[halucination_score] + 1
 
     await analytics_collection.update_one({"modelName": model}, {"$set": data.dict()})
+    print("end")
 
 @router.post("/create-chat", response_model=ChatResponse)
 async def create_chat(request: ChatRequest):

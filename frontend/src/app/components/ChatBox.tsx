@@ -285,7 +285,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
               type="submit"
               disabled={!submit}
               className={`w-full p-2 bg-gray-700 text-white font-bold rounded-lg ${
-                submit === true
+                submit === false
                   ? "bg-gray-500 cursor-not-allowed"
                   : "bg-gray-700 hover:bg-gray-800"
               }`}

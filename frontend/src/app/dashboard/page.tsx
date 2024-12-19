@@ -1,125 +1,98 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FilterSidebar from "../components/FilterSidebar";
 import Analytics from "../components/Analytics";
 
 const Dashboard: React.FC = () => {
-  const models = ["GPT-4", "GPT-3.5", "GPT-3"];
-  const metrics = [
-    "Hallucination %",
-    "Similarity",
-    "Relevance",
-    "Fluency",
-    "F1Score",
-    "Violence",
-    "Bias",
-    "SelfHarm",
-    "HateUnfairness",
-    "ContentSafety",
-  ];
-
+  const [models,setModels] = useState([]);
   const [filteredData, setFilteredData] = useState<
     { model: string; metrics: { [key: string]: number } }[]
-  >([
-    {
-      model: "GPT-4",
-      metrics: {
-        "Hallucination %": 20,
-        Similarity: 85,
-        Relevance: 70,
-        Fluency: 90,
-        F1Score: 80,
-        Violence: 20,
-        Bias: 10,
-        SelfHarm: 10,
-        HateUnfairness: 10,
-        ContentSafety: 10,
-      },
-    },
-    {
-      model: "GPT-3.5",
-      metrics: {
-        "Hallucination %": 25,
-        Similarity: 80,
-        Relevance: 65,
-        Fluency: 85,
-        F1Score: 80,
-        Violence: 20,
-        Bias: 10,
-        SelfHarm: 10,
-        HateUnfairness: 10,
-        ContentSafety: 10,
-      },
-    },
-    {
-      model: "GPT-3",
-      metrics: {
-        "Hallucination %": 25,
-        Similarity: 80,
-        Relevance: 65,
-        Fluency: 85,
-        F1Score: 80,
-        Violence: 20,
-        Bias: 10,
-        SelfHarm: 10,
-        HateUnfairness: 10,
-        ContentSafety: 10,
-      },
-    },
-  ]);
+  >([]);
+  const [originalData, setOriginalData] = useState<
+    { model: string; metrics: { [key: string]: number } }[]
+  >([]);
+  const metrics = [
+    "Hallucination ",
+    "Violence",
+    "Self Harm",
+    "Sexual",
+    "Hate Unfairness",
+    
+  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        const data = await response.json();
+  
+        interface MetricCounts {
+          [key: string]: number;
+        }
+  
+        interface TransformedData {
+          model: string;
+          metrics: {
+            Hallucination: number;
+            Violence: number;
+            Sexual: number;
+            SelfHarm: number;
+            HateUnfairness: number;
+          };
+        }
+  
+        // Transformation Logic
+        const transformedData: TransformedData[] = data.data.map((item: any) => {
+          const calculatePercentages = (metric: MetricCounts): { [key: string]: number } => {
+            const totalPrompt = item.promptCount;
+            return Object.fromEntries(
+              Object.entries(metric).map(([key, value]) => [
+                key,
+                parseFloat(((value / totalPrompt) * 100).toFixed(2)), // Calculate percentage and format
+              ])
+            );
+          };
+  
+          return {
+            model: item.modelName,
+            metrics: {
+              Hallucination: calculatePercentages(item.hallucinationCount),
+              Violence: calculatePercentages(item.violenceMetricsCount),
+              Sexual: calculatePercentages(item.sexualMetricsCount),
+              SelfHarm: calculatePercentages(item.selfHarmMetricsCount),
+              HateUnfairness: calculatePercentages(item.hateUnfairnessMetricsCount),
+            },
+          };
+        });
+  
+        // Debugging Log
+        console.log("Transformed Data:", transformedData);
+  
+        // Update States
+        setModels(data.models);
+        setOriginalData(transformedData); // Store original data
+        setFilteredData(transformedData); // Initialize filtered data
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
 
+  
   const handleApplyFilters = (
     selectedModels: string[],
     selectedMetrics: string[]
 
   ) => {
-    const originalData = [
-      {
-        model: "GPT-4",
-        metrics: {
-          "Hallucination %": 20,
-          Similarity: 85,
-          Relevance: 70,
-          Fluency: 90,
-          F1Score: 80,
-          Violence: 20,
-          Bias: 10,
-          SelfHarm: 10,
-          HateUnfairness: 10,
-          ContentSafety: 10,
-        },
-      },
-      {
-        model: "GPT-3.5",
-        metrics: {
-          "Hallucination %": 25,
-          Similarity: 80,
-          Relevance: 65,
-          Fluency: 85,
-          F1Score: 80,
-          Violence: 20,
-          Bias: 10,
-          SelfHarm: 10,
-          HateUnfairness: 10,
-          ContentSafety: 10,
-        },
-      },
-      {
-        model: "GPT-3",
-        metrics: {
-          "Hallucination %": 25,
-          Similarity: 80,
-          Relevance: 65,
-          Fluency: 85,
-          F1Score: 80,
-          Violence: 20,
-          Bias: 10,
-          SelfHarm: 10,
-          HateUnfairness: 10,
-          ContentSafety: 10,
-        },
-      },
-    ];
+    
 
     const filtered = originalData
       .filter((item) => selectedModels.includes(item.model))

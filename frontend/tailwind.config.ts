@@ -16,7 +16,6 @@ export default {
         userBubble: '#2C2C2C',    
         aiBubble: '#202020',      
         text: '#E0E0E0',
-        
         // //light theme
         // // lightBackground: '#FFFFFF',  
         // // lightSidebar: '#F1F1F1',     

@@ -16,7 +16,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   useEffect(()=>{
     setSelectedModels(models); 
     setSelectedMetrics(metrics); 
-  },[])
+  },[models,metrics]);
 
   
 

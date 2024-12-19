@@ -27,7 +27,7 @@ def hallucinationpredictor_without_contextinput(query, response):
     if prompttype == "open-ended creative":
         return {"groundedness": 6.0, "gpt_groundedness": 6.0, "groundedness_reason": "The response to the above prompt is expected to be a type of intentional hallucination, as it is an open-ended creative task and does not require factual accuracy."}
     elif prompttype == "greeting":
-        return {"groundedness": 5.0, "gpt_groundedness": 5.0, "groundedness_reason": "The response is a simple greeting or salutation, which is a common social interaction and hence it is not considered as an instance of hallucination."}
+        return {"groundedness": 5.0, "gpt_groundedness": 5.0, "groundedness_reason": "The given propmt is a casual or open ended statments that are typically informal and general designed to elicit conversational responses from the model,hence it is not considered as an instance of hallucination."}
     
     # Generate context dynamically using contextgenerator
     context = contextgenerator(query)
