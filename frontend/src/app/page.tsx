@@ -4,7 +4,7 @@ import LeftSidebar from "./components/LeftSideBar";
 import RightSidebar from "./components/RightSideBar";
 import ChatBox from "./components/ChatBox";
 import { useRouter } from "next/navigation";
-import { log } from "console";
+
 
 const ChatPage = () => {
   const router = useRouter();

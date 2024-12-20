@@ -105,7 +105,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
 
         <div className="bg-gray-800 rounded-lg p-6 shadow-xl transform transition hover:scale-105 hover:shadow-2xl border-t-4 border-yellow-200 tracking-wider">
           <h2 className="text-xl font-bold text-yellow-200">
-            Saftey
+            Safety
           </h2>
           <p className="text-sm text-gray-400">{stats.safePercentage}</p>
         </div>
