@@ -59,7 +59,7 @@ const AboutUs: React.FC = () => {
     try {
       // POST Request to the backend
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/test-model`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/test-model/`,
         {
           method: "POST",
           headers: {

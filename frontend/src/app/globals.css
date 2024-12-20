@@ -73,3 +73,32 @@ label:hover .tooltip {
 .text-metrics {
   color: #e2e8f0;  /* Light gray color for text */
 }
+
+@keyframes worm1 {
+  from {
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dashoffset: -358;
+  }
+  to {
+    stroke-dashoffset: 358;
+  }
+}
+@keyframes worm2 {
+  from {
+    stroke-dashoffset: 358;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -358;
+  }
+}
+.ip__worm1 {
+  animation: worm1 2s linear infinite;
+}
+.ip__worm2 {
+  animation: worm2 2s linear infinite;
+}
