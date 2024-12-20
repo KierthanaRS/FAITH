@@ -36,7 +36,7 @@ python -m venv .venv
 source .venv/bin/activate
 
 # For Windows
-source .venv\\bin\\Activate.ps1
+.venv\\Scripts\\Activate.ps1
 ```
 
 3. Configure the needed environment variables as per `.env.sample` file
