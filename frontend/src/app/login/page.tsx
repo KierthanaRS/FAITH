@@ -35,10 +35,11 @@ const GlassLogin: React.FC = () => {
         if (data.token) {
           
           setMessage("Login successful! Redirecting...");
-          router.push("/"); 
+          
         } else {
           setMessage("Login successful but token is missing.");
         }
+        router.push("/"); 
       } else {
         setMessage(data.detail?.message.get("message") || "Login failed.");
       }
