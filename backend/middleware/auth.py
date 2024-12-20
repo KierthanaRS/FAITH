@@ -16,9 +16,9 @@ class JWTMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         if not (request.url.path.startswith("/docs") or request.url.path.startswith("/openapi.json") or request.url.path.startswith("/api/v1/auth")):
             token: Optional[str] = request.cookies.get("token")
-
             if token is None:
-                raise HTTPException(status_code=401, detail="JWT token is missing from cookies")
+                response = await call_next(request)
+                return response
 
             try:
                 payload = jwt.decode(token, _secret, algorithms=["HS512"])

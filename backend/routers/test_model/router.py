@@ -14,7 +14,6 @@ class DataType(BaseModel):
 
 @router.post("/")
 async def test_model(data: DataType):
-    print(data)
     try:
         query = data.query
         response = data.response
@@ -23,7 +22,6 @@ async def test_model(data: DataType):
         result = await test_model_handler(query, response, context, result)
         return result
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/matrix")
@@ -32,5 +30,4 @@ async def matrix():
         result = await matrix_handler()
         return result
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail=str(e))

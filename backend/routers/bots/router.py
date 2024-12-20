@@ -86,7 +86,6 @@ async def create_chat(request: ChatRequest):
         return {"chat_name": chat_name}
 
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -100,7 +99,6 @@ async def generate_response(request: ChatRequest, background_tasks: BackgroundTa
         background_tasks.add_task(metrics_evaluator, request.message, response, request.model, hallucination['groundedness'])
         return {"bot_response": response, "hallucination": hallucination}
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/generate-metrics")
