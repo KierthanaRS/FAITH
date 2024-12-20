@@ -5,9 +5,9 @@ from configs.database import db
 async def test_model_handler(query: str, response: str, context: str, result: str):
     groundednessResult = hallucinationpredictor(query, response, context)
     score = groundednessResult['groundedness']
-    res = "Halucinating"
+    res = "Hallucinating"
     if score >= 4:
-        res = "Not Halucinating"
+        res = "Not Hallucinating"
     test_model_collection = db["TestResults"]
     data = await test_model_collection.find_one({})
     if not data:
@@ -23,13 +23,13 @@ async def test_model_handler(query: str, response: str, context: str, result: st
         data = TestResults(**data)
     except:
         pass
-    if res == result and res == "Not Halucinating":
+    if res == result and res == "Not Hallucinating":
         data.TruePositives = data.TruePositives + 1
-    elif res == result and res == "Halucinating":
+    elif res == result and res == "Hallucinating":
         data.TrueNegatives = data.TrueNegatives + 1
-    elif res != result and res == "Not Halucinating":
+    elif res != result and res == "Not Hallucinating":
         data.FalsePositives = data.FalsePositives + 1
-    elif res != result and res == "Halucinating":
+    elif res != result and res == "Hallucinating":
         data.FalseNegatives = data.FalseNegatives + 1
     data.totalPrompts = data.totalPrompts + 1
     await test_model_collection.update_one({}, {"$set": data.dict()})
