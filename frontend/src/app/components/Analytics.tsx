@@ -44,13 +44,12 @@ const Analytics: React.FC<AnalyticsProps> = ({ data }) => {
                           {
                             data: Object.values(partitions).map(Number), 
                             backgroundColor: [
-                              "#40128B",
-                              "#FF8400",
-                              "#0079FF",
-                              "#8DCBE6",
-                              "#400D51",
-                              "#FF0060"
-                             
+                              "red",
+                              "blue",
+                              "green",
+                              "yellow",
+                              "orange",
+                              "pink"                             
                             ], // Custom colors
                           },
                         ],
