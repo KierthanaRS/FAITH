@@ -186,22 +186,31 @@ const AboutUs: React.FC = () => {
 
         {/* Confusion Matrix */}
         <div className="mt-8">
-          <h2 className="text-2xl font-semibold ">Confusion Matrix</h2>
+          <h2 className="text-2xl font-semibold">Our Platform's Performance</h2>
           <div className="flex justify-center mt-6">
             <div className="grid grid-cols-2 gap-x-4 gap-y-4">
               {confusionMatrix.map((row, rowIndex) =>
-                row.map((value, colIndex) => (
-                  <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className={`h-24 w-24 flex items-center justify-center font-bold rounded ${
-                      rowIndex === colIndex
-                        ? "bg-violet-500 text-white"
-                        : "bg-gray-700 text-gray-300"
-                    }`}
-                  >
-                    {value}
-                  </div>
-                ))
+                row.map((value, colIndex) => {
+                  const labels = [
+                    ["True Positive", "False Positive"],
+                    ["False Negative", "True Negative"],
+                  ];
+                  return (
+                    <div
+                      key={`${rowIndex}-${colIndex}`}
+                      className={`h-28 w-28 flex flex-col items-center justify-center font-bold rounded ${
+                        rowIndex === colIndex
+                          ? "bg-violet-500 text-white"
+                          : "bg-gray-700 text-gray-300"
+                      }`}
+                    >                      
+                      <div className="text-lg">{value}</div>
+                      <div className="text-sm font-medium">
+                        {labels[rowIndex][colIndex]}
+                      </div>
+                    </div>
+                  );
+                })
               )}
             </div>
           </div>
