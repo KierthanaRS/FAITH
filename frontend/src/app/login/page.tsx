@@ -1,17 +1,53 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const GlassLogin: React.FC = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const hadleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
-    router.push("/");
+    setLoading(true);
+    setMessage("");
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign_in`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save JWT token in local storage
+        if (data.token) {
+          
+          setMessage("Login successful! Redirecting...");
+          router.push("/"); 
+        } else {
+          setMessage("Login successful but token is missing.");
+        }
+      } else {
+        setMessage(data.detail?.message.get("message") || "Login failed.");
+      }
+    } catch (error) {
+      setMessage("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+    
   };
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-secondary via-secondary-100 to-secondary-300">
@@ -38,9 +74,9 @@ const GlassLogin: React.FC = () => {
           <div className="relative">
             <input
               type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="User Name"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full p-3 rounded-lg bg-white/20 placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -58,16 +94,16 @@ const GlassLogin: React.FC = () => {
             type="submit"
             className="w-full p-3 text-white bg-background rounded-lg hover:bg-sidebar"
             onClick={hadleLogin}
+            disabled={loading}
           >
-            LOGIN
+             {loading ? "Logging in..." : "Login"}
           </button>
+          {message && <p className="text-center">{message}</p>}
         </form>
-
+       
         {/* Footer Links */}
         <div className="mt-4 text-center text-white text-sm">
-          {/* <a href="#" className="hover:underline">
-            Forgot Username/Password?
-          </a> */}
+      
           <br />
           <a href="/signup" className="hover:underline">
             Create your Account →

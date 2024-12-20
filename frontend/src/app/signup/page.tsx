@@ -1,7 +1,5 @@
 "use client";
 import React from "react";
-import Image from "next/image";
-import logo from "../../../public/assests/logo/logo3.png";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -10,10 +8,45 @@ const SignUp: React.FC = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
-    router.push("/");
+
+    setLoading(true);
+    setMessage("");
+    const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+      username
+    )}`;
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign_up`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          avatar,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage(data.message || "Signup successful!");
+      } else {
+        setMessage(data.detail?.message || "Signup failed.");
+      }
+      router.push("/");
+    } catch (error) {
+      setMessage("An error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-secondary via-secondary-100 to-secondary-300">
@@ -69,11 +102,12 @@ const SignUp: React.FC = () => {
             type="submit"
             className="w-full p-3 text-white bg-background rounded-lg hover:bg-sidebar"
             onClick={handleRegister}
+            disabled={loading}
           >
-            Sign Up
+           {loading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
-
+        {message && <p>{message}</p>}
         {/* Footer Links */}
         <div className="mt-4 text-center text-white text-sm">
           <br />

@@ -306,7 +306,7 @@ const AboutUs: React.FC = () => {
                   type="radio"
                   name="result"
                   value="Halucinating"
-                  checked={form.result === "Halucinating"}
+                  checked={form.result === "Hallucinating"}
                   onChange={handleChange}
                   className="mr-2"
                   required
@@ -318,7 +318,7 @@ const AboutUs: React.FC = () => {
                   type="radio"
                   name="result"
                   value="Not Halucinating"
-                  checked={form.result === "Not Halucinating"}
+                  checked={form.result === "Not Hallucinating"}
                   onChange={handleChange}
                   className="mr-2"
                   required

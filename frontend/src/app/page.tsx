@@ -77,7 +77,7 @@ const ChatPage = () => {
     email: string;
   }
 
-  const [user] = useState<User>(dummyUser);
+  const [user,setUser] = useState<User>(dummyUser);
   const [model, setModel] = useState<string>("gpt-4o-mini");
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [textModels] = useState<string[]>([
@@ -115,12 +115,33 @@ const ChatPage = () => {
   ]);
 
   useEffect(() => {
-    const x = localStorage.getItem("loggedIn") === "true";
-    setLoggedIn(x);
-    if (loggedIn && user && allChats.length === 0) {
-      fetchChats(user.id);
-    }
-    fetchAnalytics();
+    const fetchData = async () => {
+      try {
+        // Check if the user is authenticated by validating the JWT in the cookies
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/validate_token`, {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        });
+  
+        if (response.ok) {
+          const data = await response.json();
+          setLoggedIn(true); // Mark as logged in if token is valid
+          setUser(data.user); // Assuming backend returns user info
+          if (data.user && allChats.length === 0) {
+            fetchChats(data.user.id);
+          }
+        } else {
+          setLoggedIn(false); // If validation fails, set as not logged in
+        }
+      } catch (error) {
+        console.error("Error validating token:", error);
+        setLoggedIn(false);
+      }
+  
+      fetchAnalytics(); // Fetch analytics data regardless of login state
+    };
+  
+    fetchData();
   },[loggedIn]);
 
   useEffect(() => {
@@ -429,9 +450,7 @@ const ChatPage = () => {
   };
 
   const handleLogin = () => {
-    localStorage.setItem("loggedIn", "true");
-    window.location.reload();
-    setLoggedIn(true)
+    router.push("/login");
   };
 
   const handleLogout = () => {
