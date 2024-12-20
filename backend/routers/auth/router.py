@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, Request
 from configs.database import db
 from models.auth import SignInRequest, SignUpRequest
 from routers.auth.handler.auth_handler import get_hashed_password, verify_password
@@ -8,6 +8,7 @@ from typing import List
 
 router = APIRouter()
 
+COOKIE_DOMAIN = "localhost" if os.getenv("ENVIRONMENT") == "development" else os.getenv("API_DOMAIN")
 
 @router.post("/sign_up")
 async def sign_up(payload: SignUpRequest):
@@ -31,8 +32,16 @@ async def sign_in(payload: SignInRequest, response: Response):
         valid_password = verify_password(payload.password, user.get("password"))
         if not valid_password:
             raise HTTPException(status_code=403, detail={"status": "failed", "message": "Username or password does not match"})
-        jwt_token = sign_jwt(str(user.get("_id")))
-        response.set_cookie(key="token", value=jwt_token, samesite="none", expires=jwt_token["expires"], httponly=True, secure=True)
+        payload = sign_jwt(str(user.get("_id")))
+        response.set_cookie(key="token", value=payload[0], samesite="none", expires=payload[1], httponly=True, secure=True)
         return {"status": "success", "message": "Authentication successful"}
     except Exception as e:
         raise HTTPException(status_code=500, detail={"status": "failed", "message": f"Error while signing in {e}"})
+
+@router.post("/sign_out")
+async def sign_out(response: Response):
+    try:
+        response.delete_cookie("token", domain=COOKIE_DOMAIN)
+        return {"status": "success", "message": "Log out successful"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail={"status": "failed", "message": f"Error while logging out {e}"})
