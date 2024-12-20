@@ -35,7 +35,7 @@ const Analytics: React.FC<AnalyticsProps> = ({ data }) => {
                   key={metric}
                   className="bg-gray-400 p-4 rounded flex flex-col items-center justify-center"
                 >
-                  <h3 className="text-lg font-serif mb-2 text-center text-black">{metric}</h3>
+                  <h3 className="text-xl mb-2 text-center text-black">{metric}</h3>
                   <div className="relative w-full h-48 sm:w-48 md:w-56 lg:w-64 align-middle justify-center">
                     <Pie
                       data={{

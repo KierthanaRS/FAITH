@@ -4,6 +4,7 @@ import LeftSidebar from "./components/LeftSideBar";
 import RightSidebar from "./components/RightSideBar";
 import ChatBox from "./components/ChatBox";
 import { useRouter } from "next/navigation";
+import { log } from "console";
 
 const ChatPage = () => {
   const router = useRouter();
@@ -150,16 +151,8 @@ const ChatPage = () => {
 
   const fetchAnalytics = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
+      
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics/`);
       const data = await response.json();
       setAnalytics(data.data);
     } catch (error) {
@@ -342,7 +335,7 @@ const ChatPage = () => {
         },
       };
 
-      if(loggedIn){
+     if(loggedIn){
       const payload = {
         userid: user.id,
         chat: [
@@ -384,22 +377,7 @@ const ChatPage = () => {
           ...prevMessages.slice(0, -1), // Remove placeholder bot message
           updatedBotMessage,
         ]);
-      }
-      else{
-        if (flag) {
-          setSelectedHistoryId(newid);
-        }
-        const updatedBotMessage = {
-          sender: "bot",
-          text: bot_response,
-          metrics: newMessage.metrics,
-        };
-
-        setMessages((prevMessages) => [
-          ...prevMessages.slice(0, -1), 
-          updatedBotMessage,
-        ]);
-      }
+      
 
         // Update local history state
         const updatedHistory = history.map((chat) =>
@@ -414,6 +392,24 @@ const ChatPage = () => {
       } else {
         throw new Error("Failed to send chat data");
       }
+    } else {
+      
+      const updatedBotMessage = {
+        sender: "bot",
+        text: bot_response,
+        metrics: newMessage.metrics,
+      };
+
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1), // Remove placeholder bot message
+        updatedBotMessage,
+      ]);
+    
+     
+    } 
+    
+    
+    
     } catch (error) {
       console.error("Error:", error);
 
@@ -428,6 +424,7 @@ const ChatPage = () => {
       ]);
     } finally {
       setIsFetching(false);
+      fetchAnalytics();
     }
   };
 
