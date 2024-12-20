@@ -21,7 +21,6 @@ async def test_model(data: DataType):
         context = data.context
         result = data.result
         result = await test_model_handler(query, response, context, result)
-        print(result)
         return result
     except Exception as e:
         print(e)

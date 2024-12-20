@@ -34,7 +34,6 @@ def quality_generator(score:int):
 
 
 async def metrics_evaluator(query,response,model,halucination_score):
-    print(query,response,model)
     halucination_score = str(int(halucination_score))
     hateunfairness = evaluate_hateunfairness(query,response)
     selfharm = evaluate_selfharm(query,response)

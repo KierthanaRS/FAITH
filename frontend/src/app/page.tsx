@@ -215,9 +215,7 @@ const ChatPage = () => {
     if (modelChanged) {
       setSelectedHistoryId(null);
       setMessages([]);
-      console.log(messages, model, modelChanged);
       setModelChanged(false);
-      console.log(model, modelChanged);
     }
     // setSelectedHistoryId(null);
   };
@@ -344,7 +342,7 @@ const ChatPage = () => {
         },
       };
 
-      // Construct payload
+      if(loggedIn){
       const payload = {
         userid: user.id,
         chat: [
@@ -386,6 +384,22 @@ const ChatPage = () => {
           ...prevMessages.slice(0, -1), // Remove placeholder bot message
           updatedBotMessage,
         ]);
+      }
+      else{
+        if (flag) {
+          setSelectedHistoryId(newid);
+        }
+        const updatedBotMessage = {
+          sender: "bot",
+          text: bot_response,
+          metrics: newMessage.metrics,
+        };
+
+        setMessages((prevMessages) => [
+          ...prevMessages.slice(0, -1), 
+          updatedBotMessage,
+        ]);
+      }
 
         // Update local history state
         const updatedHistory = history.map((chat) =>
@@ -420,11 +434,13 @@ const ChatPage = () => {
   const handleLogin = () => {
     localStorage.setItem("loggedIn", "true");
     window.location.reload();
+    setLoggedIn(true)
   };
 
   const handleLogout = () => {
     localStorage.setItem("loggedIn", "false");
     window.location.reload();
+    setLoggedIn(false);
   };
 
   const handleModelChange = (selectedModel: string) => {
