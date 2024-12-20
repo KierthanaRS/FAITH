@@ -31,8 +31,8 @@ async def sign_in(payload: SignInRequest, response: Response):
         valid_password = verify_password(payload.password, user.get("password"))
         if not valid_password:
             raise HTTPException(status_code=403, detail={"status": "failed", "message": "Username or password does not match"})
-        jwt_token = sign_jwt(str(user.get("_id")))
-        response.set_cookie(key="token", value=jwt_token, samesite="none", expires=jwt_token["expires"], httponly=True, secure=True)
+        payload = sign_jwt(str(user.get("_id")))
+        response.set_cookie(key="token", value=payload[0], samesite="none", expires=payload[1], httponly=True, secure=True)
         return {"status": "success", "message": "Authentication successful"}
     except Exception as e:
         raise HTTPException(status_code=500, detail={"status": "failed", "message": f"Error while signing in {e}"})
