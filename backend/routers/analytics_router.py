@@ -20,7 +20,7 @@ async def get_analytics():
         for i in data:
             models.append(i["modelName"])
             del i["_id"]
-        # print(data)
+  
         return {"data": data, "models": models}
     except Exception as e:
         print(e)

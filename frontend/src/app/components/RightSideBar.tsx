@@ -51,7 +51,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
       setModel(modelName);
     }
     const modelData = analytics.find((data) => data.modelName === model);
-
     if (!modelData) {
       setStats({
         totalPrompts: "No Data Available",
@@ -87,7 +86,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({
           ? `${((oppositeViolenceSum / promptCount) * 100).toFixed(2)}%`
           : "0%",
     });
-  }, [modelName,modelSelection]);
+  }, [modelName, modelSelection, analytics, model]);
   return (
     <div className="w-64 bg-sidebar text-white h-full flex flex-col p-4">
       <h2 className="text-xl font-bold mb-4 uppercase text-center">{model}</h2>
