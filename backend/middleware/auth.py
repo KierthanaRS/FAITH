@@ -15,7 +15,6 @@ _secret = os.getenv("JWT_SECRET")
 class JWTMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         if not (request.url.path.startswith("/docs") or request.url.path.startswith("/openapi.json") or request.url.path.startswith("/api/v1/auth")):
-            # Try to get the JWT token from the cookies
             token: Optional[str] = request.cookies.get("token")
 
             if token is None:
@@ -29,9 +28,8 @@ class JWTMiddleware(BaseHTTPMiddleware):
             except jwt.PyJWTError:
                 raise HTTPException(status_code=401, detail="JWT token is invalid")
 
-            # Call the next middleware or endpoint
             response = await call_next(request)
             return response
-                # Continue to the next middleware or route handler
+
         response = await call_next(request)
         return response
