@@ -39,15 +39,15 @@ source .venv/bin/activate
 .venv\\Scripts\\Activate.ps1
 ```
 
-3. Configure the needed environment variables as per `.env.sample` file
+3. Configure the needed environment variables as per `.env.sample` file. Generate a secret for JWT to be stored under `JWT_SECRET` environment variable.
 
 4. Start the development server with the following command:
 
 ```bash
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker server:app
+gunicorn -k uvicorn.workers.UvicornWorker -w 4 --certfile='../certs/faith.com+3.pem' --keyfile='../certs/faith.com+3-key.pem' -b localhost:8000 server:app
 ```
 
-The backend should be accessible at [http://localhost:8000](http://localhost:8000)
+The backend should be accessible at [https://localhost:8000](https://localhost:8000)
 
 ### Docker
 
