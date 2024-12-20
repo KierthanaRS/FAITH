@@ -23,5 +23,4 @@ async def get_analytics():
   
         return {"data": data, "models": models}
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=500, detail=str(e))

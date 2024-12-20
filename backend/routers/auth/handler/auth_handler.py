@@ -35,7 +35,6 @@ def decode_jwt(token: str) -> dict:
         decoded_token = jwt.decode(token, _secret, algorithms=["HS512"])
         return decoded_token if int(decoded_token["expires"]) >= int(time.time()) else None
     except Exception as e:
-        print(e)
         return None
 
 
