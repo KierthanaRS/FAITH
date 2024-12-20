@@ -41,7 +41,7 @@ npm i --legacy-peer-deps
 npm run dev
 ```
 
-The frontend should be accessible at [http://localhost:3000](http://localhost:3000)
+The frontend should be accessible at [https://localhost:3000](https://localhost:3000)
 
 5. Build for production and test it using the following command:
 
