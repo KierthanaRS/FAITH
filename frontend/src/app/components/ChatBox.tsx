@@ -262,13 +262,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                     msg.metrics.hallucinationPercentage === 4 ? (
                       <div className="flex flex-col items-center p-3 bg-green-100 rounded-md shadow-md">
                         <p className="text-sm font-medium text-green-700">
-                          ✅ Hallucination: The response is not hallucinated.
+                          ✅ Hallucination: This is not a Hallucinated response
                         </p>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center p-3 bg-red-100 rounded-md shadow-md">
                         <p className="text-sm font-medium text-red-700">
-                          ⚠️ Hallucination: The model is hallucinating.
+                          ⚠️ Hallucination: This is a Hallucinated response
                         </p>
                       </div>
                     )}
@@ -327,13 +327,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({
                     msg.metrics.hallucinationPercentage === 4 ? (
                       <div className="flex flex-col items-center p-3 bg-green-100 rounded-md shadow-md">
                         <p className="text-sm font-medium text-green-700">
-                          ✅ Hallucination: The model is not hallucinating.
+                          ✅ Hallucination: This is not a Hallucinated response
                         </p>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center p-3 bg-red-100 rounded-md shadow-md">
                         <p className="text-sm font-medium text-red-700">
-                          ⚠️ Hallucination: The model is hallucinating.
+                          ⚠️ Hallucination: This is a Hallucinated response
                         </p>
                       </div>
                     )}
