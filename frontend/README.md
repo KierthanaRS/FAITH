@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FAITH Frontend
 
-## Getting Started
+# Table of Contents
 
-First, run the development server:
+# Technologies
+
+# Development
+
+The frontend of FAITH uses Next.js for building an interactive user interface. It is advisable to use Docker for working with the frontend instead of using the development server to ensure a successful deployment as Docker build uses `next build` than `next dev` which is responsible for linting and type-checking.
+
+## Pre-requisites
+
+1. [**Node.js:**](https://nodejs.org/) JavaScript runtime and package management for frontend. Installing Node.js automatically installs `npm`, required for package management.
+2. [**Docker:**](https://www.docker.com/) (optional) Supports containerization of frontend for easier deployment.
+
+## Steps
+
+### Manual
+
+1. Ensure you have Node.js and Docker (optional) on your system:
+
+```shell
+node -v
+npm -v
+docker -v
+```
+
+2. Install the needed dependencies for the project after cloning the project by the following command:
+
+```shell
+git clone https://github.com/KierthanaRS/FAITH
+cd FAITH/frontend
+npm i --legacy-peer-deps
+```
+
+3. Configure the needed environment variables as per `.env.sample` file
+
+4. Using the development server is acceptable for faster iterations during local development. Start the development server with the following command:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The frontend should be accessible at [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+5. Build for production and test it using the following command:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+### Docker
 
-To learn more about Next.js, take a look at the following resources:
+1. Build a Docker image with the following command after configuring the necessary environment variables (assuming you're using `FAITH/frontend` as the working directory):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```shell
+docker build --build-arg NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL -t faith-frontend:latest .
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. Run the image with the following command:
+```shell
+docker run --network host faith-frontend:latest 
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The frontend should be accessible at [http://localhost:3000](http://localhost:3000)
