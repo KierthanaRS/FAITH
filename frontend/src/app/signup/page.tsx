@@ -49,7 +49,7 @@ const SignUp: React.FC = () => {
     }
   };
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-secondary via-secondary-100 to-secondary-300">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br  from-background to-sidebar">
       <div className="relative bg-white/10 backdrop-blur-md shadow-lg rounded-lg p-8 w-[350px]">
         {/* Icon */}
         <div className="flex justify-center mb-6">
