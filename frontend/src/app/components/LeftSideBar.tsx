@@ -158,7 +158,7 @@ const LeftSidebar: React.FC<LeftSidebarProps> = ({
               className="w-12 h-12 rounded-full"
             />
             <div>
-              <h3 className="text-sm font-bold">{user.name}</h3>
+              <h3 className="text-sm font-bold text-gray-400">{user.name}</h3>
               <p className="text-xs text-gray-400">{user.email}</p>
             </div>
           </div>
