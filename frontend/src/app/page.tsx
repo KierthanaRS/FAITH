@@ -454,7 +454,7 @@ const ChatPage = () => {
   };
 
   const handleLogout = () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sign_out`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign_out`, {
       method: "POST",
       credentials: "include",
     })
