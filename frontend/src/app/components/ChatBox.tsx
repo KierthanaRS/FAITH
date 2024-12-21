@@ -160,7 +160,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({
 
       const errorBotMessage = {
         sender: "bot",
-        text: "Failed to submit. Please try again later.",
+        text: "We are currently being rate limited due to high traffic. We deeply regret the inconvenience caused. Please try again after some time.",
       };
       setCustomMessages((prevMessages) => [...prevMessages, errorBotMessage]);
       setSubmit(true);

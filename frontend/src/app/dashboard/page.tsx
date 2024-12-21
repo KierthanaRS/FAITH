@@ -16,9 +16,9 @@ const Dashboard: React.FC = () => {
   const metrics = [
     "Hallucination",
     "Violence",
-    "Self Harm",
+    "SelfHarm",
     "Sexual",
-    "Hate Unfairness",
+    "HateUnfairness",
   ];
   useEffect(() => {
     const fetchData = async () => {

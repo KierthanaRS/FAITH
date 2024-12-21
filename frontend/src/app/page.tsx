@@ -4,7 +4,7 @@ import LeftSidebar from "./components/LeftSideBar";
 import RightSidebar from "./components/RightSideBar";
 import ChatBox from "./components/ChatBox";
 import { useRouter } from "next/navigation";
-import { log } from "console";
+import Cookies from "js-cookie";
 
 const ChatPage = () => {
   const router = useRouter();
@@ -47,28 +47,26 @@ const ChatPage = () => {
     }[];
   }
 
-  const [allChats, setAllChats] = useState<Chat[]>([]); 
+  const [allChats, setAllChats] = useState<Chat[]>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   interface Analytics {
-
-      modelName: string;
-      promptCount: number;
-      hallucinationCount: Record<string, number>;
-      violenceMetricsCount: Record<string, number>;
-      sexualMetricsCount: Record<string, number>;
-      selfHarmMetricsCount: Record<string, number>;
-      hateUnfairnessMetricsCount: Record<string, number>;
-    
+    modelName: string;
+    promptCount: number;
+    hallucinationCount: Record<string, number>;
+    violenceMetricsCount: Record<string, number>;
+    sexualMetricsCount: Record<string, number>;
+    selfHarmMetricsCount: Record<string, number>;
+    hateUnfairnessMetricsCount: Record<string, number>;
   }
 
   const [analytics, setAnalytics] = useState<Analytics[] | null>(null);
-  const dummyUser = {
-    id: "675af187fc14f57242759769",
-    avatar:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyWLjkYKGswBE2f9mynFkd8oPT1W4Gx8RpDQ&s",
-    name: "John Doe",
-    email: "johndoe@contoso.com",
-  };
+  // const dummyUser = {
+  //   id: "675af187fc14f57242759769",
+  //   avatar:
+  //     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyWLjkYKGswBE2f9mynFkd8oPT1W4Gx8RpDQ&s",
+  //   name: "John Doe",
+  //   email: "johndoe@contoso.com",
+  // };
 
   interface User {
     id: string;
@@ -77,7 +75,12 @@ const ChatPage = () => {
     email: string;
   }
 
-  const [user,setUser] = useState<User>(dummyUser);
+  const [user, setUser] = useState<User>({
+    id: "",
+    avatar: "",
+    name: "",
+    email: "",
+  });
   const [model, setModel] = useState<string>("gpt-4o-mini");
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [textModels] = useState<string[]>([
@@ -118,31 +121,34 @@ const ChatPage = () => {
     const fetchData = async () => {
       try {
         // Check if the user is authenticated by validating the JWT in the cookies
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/validate_token`, {
-          method: "GET",
-          credentials: "include", // Include cookies in the request
-        });
-  
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/validate_token`,
+          {
+            method: "GET",
+            credentials: "include", // Include cookies in the request
+          }
+        );
+
         if (response.ok) {
           const data = await response.json();
-          setLoggedIn(true); 
-          setUser(data.user); 
+          setLoggedIn(true);
+          setUser(data.user);
           if (data.user && allChats.length === 0) {
             fetchChats(data.user.id);
           }
         } else {
-          setLoggedIn(false); 
+          setLoggedIn(false);
         }
       } catch (error) {
         console.log("Error validating token:", error);
         setLoggedIn(false);
       }
-  
-      fetchAnalytics(); 
+
+      fetchAnalytics();
     };
-  
+
     fetchData();
-  },[loggedIn]);
+  }, [loggedIn]);
 
   useEffect(() => {
     if (allChats.length > 0) {
@@ -159,7 +165,7 @@ const ChatPage = () => {
       const data = await response.json();
 
       if (data && data.length > 0) {
-        setAllChats(data[0]?.chat || []); 
+        setAllChats(data[0]?.chat || []);
         updateHistoryForModel(model, data[0]?.chat); // Initialize history for the current model
       } else {
         setHistory([]);
@@ -172,8 +178,9 @@ const ChatPage = () => {
 
   const fetchAnalytics = async () => {
     try {
-      
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics/`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics/`
+      );
       const data = await response.json();
       setAnalytics(data.data);
     } catch (error) {
@@ -356,38 +363,63 @@ const ChatPage = () => {
         },
       };
 
-     if(loggedIn){
-      const payload = {
-        userid: user.id,
-        chat: [
+      if (loggedIn) {
+        const payload = {
+          userid: user.id,
+          chat: [
+            {
+              modelName: model,
+              chat: [
+                {
+                  chatid: id, // Use chatid from selected history
+                  chatName: name, // Use chatName from selected history
+                  messages: [newMessage], // Append new message
+                },
+              ],
+            },
+          ],
+        };
+
+        // POST request to backend
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/chats/addchats`,
           {
-            modelName: model,
-            chat: [
-              {
-                chatid: id, // Use chatid from selected history
-                chatName: name, // Use chatName from selected history
-                messages: [newMessage], // Append new message
-              },
-            ],
-          },
-        ],
-      };
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          }
+        );
 
-      // POST request to backend
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chats/addchats`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+        if (response.ok) {
+          if (flag) {
+            fetchChats(user.id);
+            setSelectedHistoryId(newid);
+          }
+          const updatedBotMessage = {
+            sender: "bot",
+            text: bot_response,
+            metrics: newMessage.metrics,
+          };
 
-      if (response.ok) {
-        if (flag) {
-          fetchChats(user.id);
-          setSelectedHistoryId(newid);
+          setMessages((prevMessages) => [
+            ...prevMessages.slice(0, -1), // Remove placeholder bot message
+            updatedBotMessage,
+          ]);
+
+          // Update local history state
+          const updatedHistory = history.map((chat) =>
+            chat.id === selectedHistoryId
+              ? {
+                  ...chat,
+                  messages: [...chat.messages, newMessage], // Append new message
+                }
+              : chat
+          );
+          setHistory(updatedHistory);
+        } else {
+          throw new Error("Failed to send chat data");
         }
+      } else {
         const updatedBotMessage = {
           sender: "bot",
           text: bot_response,
@@ -398,45 +430,13 @@ const ChatPage = () => {
           ...prevMessages.slice(0, -1), // Remove placeholder bot message
           updatedBotMessage,
         ]);
-      
-
-        // Update local history state
-        const updatedHistory = history.map((chat) =>
-          chat.id === selectedHistoryId
-            ? {
-                ...chat,
-                messages: [...chat.messages, newMessage], // Append new message
-              }
-            : chat
-        );
-        setHistory(updatedHistory);
-      } else {
-        throw new Error("Failed to send chat data");
       }
-    } else {
-      
-      const updatedBotMessage = {
-        sender: "bot",
-        text: bot_response,
-        metrics: newMessage.metrics,
-      };
-
-      setMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1), // Remove placeholder bot message
-        updatedBotMessage,
-      ]);
-    
-     
-    } 
-    
-    
-    
     } catch (error) {
       console.log("Error:", error);
 
       const errorBotMessage = {
         sender: "bot",
-        text: "An error occurred. Please try again.",
+        text: "We are currently being rate limited due to high traffic. We deeply regret the inconvenience caused. Please try again after some time.",
       };
 
       setMessages((prevMessages) => [
@@ -454,22 +454,11 @@ const ChatPage = () => {
   };
 
   const handleLogout = () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign_out`, {
-      method: "POST",
-      credentials: "include",
-    })
-      .then((response) => {
-        if (response.ok) {
-          setLoggedIn(false);
-          setMessages([]);
-          setHistory([]);
-          setAllChats([]);
-        }
-      })
-      .catch((error) => {
-        console.log("Error logging out:", error);
-      });
-    
+    Cookies.remove("token");
+    setLoggedIn(false);
+    setHistory([]);
+    setMessages([]);
+    setAllChats([]);
   };
 
   const handleModelChange = (selectedModel: string) => {
