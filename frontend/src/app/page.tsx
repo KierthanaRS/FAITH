@@ -125,20 +125,20 @@ const ChatPage = () => {
   
         if (response.ok) {
           const data = await response.json();
-          setLoggedIn(true); // Mark as logged in if token is valid
-          setUser(data.user); // Assuming backend returns user info
+          setLoggedIn(true); 
+          setUser(data.user); 
           if (data.user && allChats.length === 0) {
             fetchChats(data.user.id);
           }
         } else {
-          setLoggedIn(false); // If validation fails, set as not logged in
+          setLoggedIn(false); 
         }
       } catch (error) {
-        console.error("Error validating token:", error);
+        console.log("Error validating token:", error);
         setLoggedIn(false);
       }
   
-      fetchAnalytics(); // Fetch analytics data regardless of login state
+      fetchAnalytics(); 
     };
   
     fetchData();
@@ -166,7 +166,7 @@ const ChatPage = () => {
         setMessages([]);
       }
     } catch (error) {
-      console.error("Error fetching chats:", error);
+      console.log("Error fetching chats:", error);
     }
   };
 
@@ -177,7 +177,7 @@ const ChatPage = () => {
       const data = await response.json();
       setAnalytics(data.data);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.log("Error fetching data:", error);
     }
   };
   // Update history and messages based on the selected model
@@ -276,7 +276,7 @@ const ChatPage = () => {
       const data = await response.json();
       return { chatId: id, chatName: data.chat_name };
     } catch (error) {
-      console.error("Error creating chat:", error);
+      console.log("Error creating chat:", error);
       throw error;
     }
   };
@@ -307,7 +307,7 @@ const ChatPage = () => {
         reason: data.hallucination.groundedness_reason,
       };
     } catch (error) {
-      console.error("Error generating response", error);
+      console.log("Error generating response", error);
       throw error;
     }
   };
@@ -432,7 +432,7 @@ const ChatPage = () => {
     
     
     } catch (error) {
-      console.error("Error:", error);
+      console.log("Error:", error);
 
       const errorBotMessage = {
         sender: "bot",
@@ -454,9 +454,22 @@ const ChatPage = () => {
   };
 
   const handleLogout = () => {
-    localStorage.setItem("loggedIn", "false");
-    window.location.reload();
-    setLoggedIn(false);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/sign_out`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((response) => {
+        if (response.ok) {
+          setLoggedIn(false);
+          setMessages([]);
+          setHistory([]);
+          setAllChats([]);
+        }
+      })
+      .catch((error) => {
+        console.log("Error logging out:", error);
+      });
+    
   };
 
   const handleModelChange = (selectedModel: string) => {
