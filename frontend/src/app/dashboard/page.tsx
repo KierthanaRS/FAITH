@@ -4,7 +4,7 @@ import FilterSidebar from "../components/FilterSidebar";
 import Analytics from "../components/Analytics";
 
 const Dashboard: React.FC = () => {
-  const [models,setModels] = useState([]);
+  const [models, setModels] = useState([]);
   const [filteredData, setFilteredData] = useState<
     { model: string; metrics: { [key: string]: number } }[]
   >([]);
@@ -16,22 +16,31 @@ const Dashboard: React.FC = () => {
   const metrics = [
     "Hallucination",
     "Violence",
-    "SelfHarm",
+    "Self Harm",
     "Sexual",
-    "HateUnfairness",
-    
+    "Hate Unfairness",
   ];
   useEffect(() => {
     const fetchData = async () => {
+      const hallucinationMapping: { [key: number]: string } = {
+        1: "Very High",
+        2: "High",
+        3: "Medium",
+        4: "Low",
+        5: "Very Low",
+        6: "Intentional"
+      };
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics/`);
-  
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/analytics/`
+        );
+
         const data = await response.json();
-  
+
         interface MetricCounts {
           [key: string]: number;
         }
-  
+
         interface TransformedData {
           model: string;
           metrics: {
@@ -42,36 +51,53 @@ const Dashboard: React.FC = () => {
             HateUnfairness: number;
           };
         }
-  
+
         // Transformation Logic
-        const transformedData: TransformedData[] = data.data.map((item: any) => {
-          const calculatePercentages = (metric: MetricCounts): { [key: string]: number } => {
-            const totalPrompt = item.promptCount;
-            return Object.fromEntries(
-              Object.entries(metric).map(([key, value]) => [
-                key,
-                parseFloat(((value / totalPrompt) * 100).toFixed(2)), // Calculate percentage and format
-              ])
-            );
-          };
-  
-          return {
-            model: item.modelName,
-            metrics: {
-              Hallucination: calculatePercentages(item.hallucinationCount),
-              Violence: calculatePercentages(item.violenceMetricsCount),
-              Sexual: calculatePercentages(item.sexualMetricsCount),
-              SelfHarm: calculatePercentages(item.selfHarmMetricsCount),
-              HateUnfairness: calculatePercentages(item.hateUnfairnessMetricsCount),
-            },
-          };
-        });
-  
-       
-  
+        const transformedData: TransformedData[] = data.data.map(
+          (item: any) => {
+            const calculatePercentages = (
+              metric: MetricCounts
+            ): { [key: string]: number } => {
+              const totalPrompt = item.promptCount;
+              const getKeyMapping = (key: string): string => {
+                if (!isNaN(Number(key)) && key.trim() !== "") {
+                  const num = Number(key);
+                  if (num >= 1 && num <= 7) {
+                    const mapping = hallucinationMapping[num];
+                    return mapping;
+                  }
+                }
+                return key;
+              }
+              const prompts = Object.fromEntries(
+                Object.entries(metric).map(([key, value]) => {
+                  return [
+                    getKeyMapping(key),
+                    parseFloat(((value / totalPrompt) * 100).toFixed(2)), // Calculate percentage and format
+                  ];
+                })
+              );
+              return prompts;
+            };
+
+            return {
+              model: item.modelName,
+              metrics: {
+                Hallucination: calculatePercentages(item.hallucinationCount),
+                Violence: calculatePercentages(item.violenceMetricsCount),
+                Sexual: calculatePercentages(item.sexualMetricsCount),
+                SelfHarm: calculatePercentages(item.selfHarmMetricsCount),
+                HateUnfairness: calculatePercentages(
+                  item.hateUnfairnessMetricsCount
+                ),
+              },
+            };
+          }
+        );
+
         // Update States
         setModels(data.models);
-        setOriginalData(transformedData); 
+        setOriginalData(transformedData);
         setFilteredData(transformedData);
         setSelectedModels(data.models);
         setSelectedMetrics(metrics);
@@ -79,12 +105,10 @@ const Dashboard: React.FC = () => {
         console.error("Error fetching data:", error);
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
-  
   const handleApplyFilters = (
     selectedModels: string[],
     selectedMetrics: string[]
@@ -93,24 +117,21 @@ const Dashboard: React.FC = () => {
       .filter((item) => selectedModels.includes(item.model))
       .map((item) => {
         const filteredMetrics = Object.entries(item.metrics)
-          .filter(([metric]) => selectedMetrics.includes(metric)) 
+          .filter(([metric]) => selectedMetrics.includes(metric))
           .reduce((acc, [key, value]) => {
-            acc[key] = value; 
+            acc[key] = value;
             return acc;
-          }, {} as { [key: string]: number }); 
-  
+          }, {} as { [key: string]: number });
         return {
           model: item.model,
           metrics: filteredMetrics,
         };
       })
-     
+
       .filter((item) => Object.keys(item.metrics).length > 0);
-  
+
     setFilteredData(filtered);
   };
-  
-  
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
@@ -118,7 +139,7 @@ const Dashboard: React.FC = () => {
         models={models}
         metrics={metrics}
         onApplyFilters={handleApplyFilters}
-        selectedModels={selectedModels} 
+        selectedModels={selectedModels}
         selectedMetrics={selectedMetrics}
         setSelectedModels={setSelectedModels}
         setSelectedMetrics={setSelectedMetrics}
